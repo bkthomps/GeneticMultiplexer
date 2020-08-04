@@ -35,8 +35,23 @@ std::unique_ptr<Expr> randomNode(const std::vector<std::string>& terminalOptions
     }
 }
 
+/*std::tuple<std::unique_ptr<Expr>, std::unique_ptr<Expr>>
+performRecombination(const std::unique_ptr<Expr>& firstHead,
+                     const std::unique_ptr<Expr>& secondHead) {
+    // TODO: implement
+    return std::make_tuple(nullptr, nullptr);
+}*/
+
 Not::Not(const std::vector<std::string>& terminalOptions, int depth) {
     expr = randomNode(terminalOptions, depth - 1);
+}
+
+Not::Not(const Not& old) {
+    expr = old.expr->clone();
+}
+
+std::unique_ptr<Expr> Not::clone() {
+    return std::make_unique<Not>(*this);
 }
 
 int Not::computeDepth() {
@@ -74,6 +89,15 @@ void Not::returnChildOwnership(std::unique_ptr<Expr> child) {
 And::And(const std::vector<std::string>& terminalOptions, int depth) {
     first = randomNode(terminalOptions, depth - 1);
     second = randomNode(terminalOptions, depth - 1);
+}
+
+And::And(const And& old) {
+    first = old.first->clone();
+    second = old.second->clone();
+}
+
+std::unique_ptr<Expr> And::clone() {
+    return std::make_unique<And>(*this);
 }
 
 int And::computeDepth() {
@@ -134,6 +158,15 @@ Or::Or(const std::vector<std::string>& terminalOptions, int depth) {
     second = randomNode(terminalOptions, depth - 1);
 }
 
+Or::Or(const Or& old) {
+    first = old.first->clone();
+    second = old.second->clone();
+}
+
+std::unique_ptr<Expr> Or::clone() {
+    return std::make_unique<Or>(*this);
+}
+
 int Or::computeDepth() {
     return 1 + std::max(first->computeDepth(), second->computeDepth());
 }
@@ -191,6 +224,16 @@ If::If(const std::vector<std::string>& terminalOptions, int depth) {
     condition = randomNode(terminalOptions, depth - 1);
     trueCase = randomNode(terminalOptions, depth - 1);
     falseCase = randomNode(terminalOptions, depth - 1);
+}
+
+If::If(const If& old) {
+    condition = old.condition->clone();
+    trueCase = old.trueCase->clone();
+    falseCase = old.falseCase->clone();
+}
+
+std::unique_ptr<Expr> If::clone() {
+    return std::make_unique<If>(*this);
 }
 
 int If::computeDepth() {
@@ -266,6 +309,14 @@ Terminal::Terminal(const std::vector<std::string>& terminalOptions) {
     terminal = terminalOptions[rand];
 }
 
+Terminal::Terminal(const Terminal& old) {
+    terminal = old.terminal;
+}
+
+std::unique_ptr<Expr> Terminal::clone() {
+    return std::make_unique<Terminal>(*this);
+}
+
 int Terminal::computeDepth() {
     return 0;
 }
@@ -279,7 +330,7 @@ bool Terminal::evaluate(const std::unordered_map<std::string, bool>& truthMap) {
 }
 
 std::string Terminal::prettyPrint() {
-    return terminal;
+    return std::string{terminal};
 }
 
 Expr* Terminal::retrieveArbitraryNode(double) {
