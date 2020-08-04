@@ -2,6 +2,7 @@
 #include <memory>
 #include <unordered_map>
 #include <vector>
+#include "constants.h"
 #include "expressions.h"
 
 int main() {
@@ -14,9 +15,8 @@ int main() {
             {"d3", false},
     };
     std::vector<const std::string> optionsMux6 = {"a0", "a1", "d0", "d1", "d2", "d3"};
-    int headDepth = 3;
-    std::unique_ptr<Expr> first = randomNode(optionsMux6, headDepth);
-    std::unique_ptr<Expr> second = randomNode(optionsMux6, headDepth);
+    std::unique_ptr<Expr> first = randomNode(optionsMux6, initialDepth);
+    std::unique_ptr<Expr> second = randomNode(optionsMux6, initialDepth);
     auto tuple = performRecombination(first.get(), second.get());
     std::cout << first->prettyPrint() << std::endl;
     std::cout << second->prettyPrint() << std::endl;

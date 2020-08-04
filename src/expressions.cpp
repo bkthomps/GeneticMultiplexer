@@ -1,6 +1,7 @@
 #include <algorithm>
 #include <random>
 #include <stdexcept>
+#include "constants.h"
 #include "expressions.h"
 
 std::random_device seed;
@@ -36,7 +37,7 @@ std::unique_ptr<Expr> randomNode(const std::vector<const std::string>& terminalO
 }
 
 Expr* retrieveArbitraryNode(Expr* head) {
-    double probability = 4.0 / head->computeLogicSize();
+    double probability = arbitraryNodeSelectionAggressiveness / head->computeLogicSize();
     Expr* arbitraryNode = nullptr;
     while (arbitraryNode == nullptr) {
         arbitraryNode = head->retrieveArbitraryNode(probability);
