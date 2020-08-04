@@ -15,13 +15,14 @@ class Expr
 {
 public:
     virtual ~Expr() = default;
-    virtual std::unique_ptr<Expr> clone() = 0;
-    virtual int computeDepth() = 0;
-    virtual int computeLogicSize() = 0;
-    virtual bool evaluate(const std::unordered_map<std::string, bool>& truthMap) = 0;
-    virtual std::string prettyPrint() = 0;
-    virtual Expr* retrieveArbitraryNode(double probability) = 0;
-    virtual std::unique_ptr<Expr> ownRandomChild() = 0;
+    [[nodiscard]] virtual std::unique_ptr<Expr> clone() const = 0;
+    [[nodiscard]] virtual int computeDepth() const = 0;
+    [[nodiscard]] virtual int computeLogicSize() const = 0;
+    [[nodiscard]] virtual bool
+    evaluate(const std::unordered_map<std::string, bool>& truthMap) const = 0;
+    [[nodiscard]] virtual std::string prettyPrint() const = 0;
+    [[nodiscard]] virtual Expr* retrieveArbitraryNode(double probability) = 0;
+    [[nodiscard]] virtual std::unique_ptr<Expr> ownRandomChild() = 0;
     virtual void returnChildOwnership(std::unique_ptr<Expr> child) = 0;
 };
 
@@ -40,13 +41,14 @@ private:
 public:
     Not(const std::vector<const std::string>& terminalOptions, int depth);
     Not(const Not& old);
-    std::unique_ptr<Expr> clone() override;
-    int computeDepth() override;
-    int computeLogicSize() override;
-    bool evaluate(const std::unordered_map<std::string, bool>& truthMap) override;
-    std::string prettyPrint() override;
-    Expr* retrieveArbitraryNode(double probability) override;
-    std::unique_ptr<Expr> ownRandomChild() override;
+    [[nodiscard]] std::unique_ptr<Expr> clone() const override;
+    [[nodiscard]] int computeDepth() const override;
+    [[nodiscard]] int computeLogicSize() const override;
+    [[nodiscard]] bool
+    evaluate(const std::unordered_map<std::string, bool>& truthMap) const override;
+    [[nodiscard]] std::string prettyPrint() const override;
+    [[nodiscard]] Expr* retrieveArbitraryNode(double probability) override;
+    [[nodiscard]] std::unique_ptr<Expr> ownRandomChild() override;
     void returnChildOwnership(std::unique_ptr<Expr> child) override;
 };
 
@@ -58,13 +60,14 @@ private:
 public:
     And(const std::vector<const std::string>& terminalOptions, int depth);
     And(const And& old);
-    std::unique_ptr<Expr> clone() override;
-    int computeDepth() override;
-    int computeLogicSize() override;
-    bool evaluate(const std::unordered_map<std::string, bool>& truthMap) override;
-    std::string prettyPrint() override;
-    Expr* retrieveArbitraryNode(double probability) override;
-    std::unique_ptr<Expr> ownRandomChild() override;
+    [[nodiscard]] std::unique_ptr<Expr> clone() const override;
+    [[nodiscard]] int computeDepth() const override;
+    [[nodiscard]] int computeLogicSize() const override;
+    [[nodiscard]] bool
+    evaluate(const std::unordered_map<std::string, bool>& truthMap) const override;
+    [[nodiscard]] std::string prettyPrint() const override;
+    [[nodiscard]] Expr* retrieveArbitraryNode(double probability) override;
+    [[nodiscard]] std::unique_ptr<Expr> ownRandomChild() override;
     void returnChildOwnership(std::unique_ptr<Expr> child) override;
 };
 
@@ -76,13 +79,14 @@ private:
 public:
     Or(const std::vector<const std::string>& terminalOptions, int depth);
     Or(const Or& old);
-    std::unique_ptr<Expr> clone() override;
-    int computeDepth() override;
-    int computeLogicSize() override;
-    bool evaluate(const std::unordered_map<std::string, bool>& truthMap) override;
-    std::string prettyPrint() override;
-    Expr* retrieveArbitraryNode(double probability) override;
-    std::unique_ptr<Expr> ownRandomChild() override;
+    [[nodiscard]] std::unique_ptr<Expr> clone() const override;
+    [[nodiscard]] int computeDepth() const override;
+    [[nodiscard]] int computeLogicSize() const override;
+    [[nodiscard]] bool
+    evaluate(const std::unordered_map<std::string, bool>& truthMap) const override;
+    [[nodiscard]] std::string prettyPrint() const override;
+    [[nodiscard]] Expr* retrieveArbitraryNode(double probability) override;
+    [[nodiscard]] std::unique_ptr<Expr> ownRandomChild() override;
     void returnChildOwnership(std::unique_ptr<Expr> child) override;
 };
 
@@ -95,13 +99,14 @@ private:
 public:
     If(const std::vector<const std::string>& terminalOptions, int depth);
     If(const If& old);
-    std::unique_ptr<Expr> clone() override;
-    int computeDepth() override;
-    int computeLogicSize() override;
-    bool evaluate(const std::unordered_map<std::string, bool>& truthMap) override;
-    std::string prettyPrint() override;
-    Expr* retrieveArbitraryNode(double probability) override;
-    std::unique_ptr<Expr> ownRandomChild() override;
+    [[nodiscard]] std::unique_ptr<Expr> clone() const override;
+    [[nodiscard]] int computeDepth() const override;
+    [[nodiscard]] int computeLogicSize() const override;
+    [[nodiscard]] bool
+    evaluate(const std::unordered_map<std::string, bool>& truthMap) const override;
+    [[nodiscard]] std::string prettyPrint() const override;
+    [[nodiscard]] Expr* retrieveArbitraryNode(double probability) override;
+    [[nodiscard]] std::unique_ptr<Expr> ownRandomChild() override;
     void returnChildOwnership(std::unique_ptr<Expr> child) override;
 };
 
@@ -112,13 +117,14 @@ private:
 public:
     explicit Terminal(const std::vector<const std::string>& terminalOptions);
     Terminal(const Terminal& old);
-    std::unique_ptr<Expr> clone() override;
-    int computeDepth() override;
-    int computeLogicSize() override;
-    bool evaluate(const std::unordered_map<std::string, bool>& truthMap) override;
-    std::string prettyPrint() override;
-    Expr* retrieveArbitraryNode(double probability) override;
-    std::unique_ptr<Expr> ownRandomChild() override;
+    [[nodiscard]] std::unique_ptr<Expr> clone() const override;
+    [[nodiscard]] int computeDepth() const override;
+    [[nodiscard]] int computeLogicSize() const override;
+    [[nodiscard]] bool
+    evaluate(const std::unordered_map<std::string, bool>& truthMap) const override;
+    [[nodiscard]] std::string prettyPrint() const override;
+    [[nodiscard]] Expr* retrieveArbitraryNode(double probability) override;
+    [[nodiscard]] std::unique_ptr<Expr> ownRandomChild() override;
     void returnChildOwnership(std::unique_ptr<Expr> child) override;
 };
 

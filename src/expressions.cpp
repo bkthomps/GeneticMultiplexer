@@ -50,23 +50,23 @@ Not::Not(const Not& old) {
     expr = old.expr->clone();
 }
 
-std::unique_ptr<Expr> Not::clone() {
+std::unique_ptr<Expr> Not::clone() const {
     return std::make_unique<Not>(*this);
 }
 
-int Not::computeDepth() {
+int Not::computeDepth() const {
     return 1 + expr->computeDepth();
 }
 
-int Not::computeLogicSize() {
+int Not::computeLogicSize() const {
     return 1 + expr->computeLogicSize();
 }
 
-bool Not::evaluate(const std::unordered_map<std::string, bool>& truthMap) {
+bool Not::evaluate(const std::unordered_map<std::string, bool>& truthMap) const {
     return !expr->evaluate(truthMap);
 }
 
-std::string Not::prettyPrint() {
+std::string Not::prettyPrint() const {
     return "( NOT " + expr->prettyPrint() + " )";
 }
 
@@ -96,23 +96,23 @@ And::And(const And& old) {
     second = old.second->clone();
 }
 
-std::unique_ptr<Expr> And::clone() {
+std::unique_ptr<Expr> And::clone() const {
     return std::make_unique<And>(*this);
 }
 
-int And::computeDepth() {
+int And::computeDepth() const {
     return 1 + std::max(first->computeDepth(), second->computeDepth());
 }
 
-int And::computeLogicSize() {
+int And::computeLogicSize() const {
     return 1 + first->computeLogicSize() + second->computeLogicSize();
 }
 
-bool And::evaluate(const std::unordered_map<std::string, bool>& truthMap) {
+bool And::evaluate(const std::unordered_map<std::string, bool>& truthMap) const {
     return first->evaluate(truthMap) && second->evaluate(truthMap);
 }
 
-std::string And::prettyPrint() {
+std::string And::prettyPrint() const {
     return "( " + first->prettyPrint() + " AND " + second->prettyPrint() + " )";
 }
 
@@ -163,23 +163,23 @@ Or::Or(const Or& old) {
     second = old.second->clone();
 }
 
-std::unique_ptr<Expr> Or::clone() {
+std::unique_ptr<Expr> Or::clone() const {
     return std::make_unique<Or>(*this);
 }
 
-int Or::computeDepth() {
+int Or::computeDepth() const {
     return 1 + std::max(first->computeDepth(), second->computeDepth());
 }
 
-int Or::computeLogicSize() {
+int Or::computeLogicSize() const {
     return 1 + first->computeLogicSize() + second->computeLogicSize();
 }
 
-bool Or::evaluate(const std::unordered_map<std::string, bool>& truthMap) {
+bool Or::evaluate(const std::unordered_map<std::string, bool>& truthMap) const {
     return first->evaluate(truthMap) || second->evaluate(truthMap);
 }
 
-std::string Or::prettyPrint() {
+std::string Or::prettyPrint() const {
     return "( " + first->prettyPrint() + " OR " + second->prettyPrint() + " )";
 }
 
@@ -232,26 +232,26 @@ If::If(const If& old) {
     falseCase = old.falseCase->clone();
 }
 
-std::unique_ptr<Expr> If::clone() {
+std::unique_ptr<Expr> If::clone() const {
     return std::make_unique<If>(*this);
 }
 
-int If::computeDepth() {
+int If::computeDepth() const {
     int partialDepth = std::max(trueCase->computeDepth(), falseCase->computeDepth());
     return 1 + std::max(condition->computeDepth(), partialDepth);
 }
 
-int If::computeLogicSize() {
+int If::computeLogicSize() const {
     return 1 + condition->computeLogicSize() + trueCase->computeLogicSize()
            + falseCase->computeLogicSize();
 }
 
-bool If::evaluate(const std::unordered_map<std::string, bool>& truthMap) {
+bool If::evaluate(const std::unordered_map<std::string, bool>& truthMap) const {
     return condition->evaluate(truthMap) ? trueCase->evaluate(truthMap)
                                          : falseCase->evaluate(truthMap);
 }
 
-std::string If::prettyPrint() {
+std::string If::prettyPrint() const {
     return "( IF " + condition->prettyPrint() + " THEN " + trueCase->prettyPrint()
            + " ELSE " + falseCase->prettyPrint() + " )";
 }
@@ -313,23 +313,23 @@ Terminal::Terminal(const Terminal& old) {
     terminal = old.terminal;
 }
 
-std::unique_ptr<Expr> Terminal::clone() {
+std::unique_ptr<Expr> Terminal::clone() const {
     return std::make_unique<Terminal>(*this);
 }
 
-int Terminal::computeDepth() {
+int Terminal::computeDepth() const {
     return 0;
 }
 
-int Terminal::computeLogicSize() {
+int Terminal::computeLogicSize() const {
     return 0;
 }
 
-bool Terminal::evaluate(const std::unordered_map<std::string, bool>& truthMap) {
+bool Terminal::evaluate(const std::unordered_map<std::string, bool>& truthMap) const {
     return truthMap.at(terminal);
 }
 
-std::string Terminal::prettyPrint() {
+std::string Terminal::prettyPrint() const {
     return std::string{terminal};
 }
 
