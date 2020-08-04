@@ -18,7 +18,7 @@ int main() {
     int depth = head->computeDepth();
     int size = head->computeSize();
     bool truth = head->evaluate(mux6);
-    std::cout << "Depth: " << depth << ", Size: " << size << ", Truth: "
-              << truth << std::endl;
+    std::cout << "Depth: " << depth << ", Size: " << size << ", Truth: " << truth << std::endl;
+    std::cout << head->prettyPrint() << std::endl;
     return 0;
 }
