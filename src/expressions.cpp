@@ -35,12 +35,28 @@ std::unique_ptr<Expr> randomNode(const std::vector<const std::string>& terminalO
     }
 }
 
-/*std::tuple<std::unique_ptr<Expr>, std::unique_ptr<Expr>>
-performRecombination(const std::unique_ptr<Expr>& firstHead,
-                     const std::unique_ptr<Expr>& secondHead) {
-    // TODO: implement
-    return std::make_tuple(nullptr, nullptr);
-}*/
+Expr* retrieveArbitraryNode(Expr* head) {
+    double probability = 4.0 / head->computeLogicSize();
+    Expr* arbitraryNode = nullptr;
+    while (arbitraryNode == nullptr) {
+        arbitraryNode = head->retrieveArbitraryNode(probability);
+    }
+    return arbitraryNode;
+}
+
+std::tuple<std::unique_ptr<Expr>, std::unique_ptr<Expr>>
+performRecombination(Expr* oldFirstHead, Expr* oldSecondHead) {
+    assert(oldFirstHead != nullptr && oldSecondHead != nullptr);
+    std::unique_ptr<Expr> firstHeadCopy = oldFirstHead->clone();
+    std::unique_ptr<Expr> secondHeadCopy = oldSecondHead->clone();
+    Expr* firstArbitraryNode = retrieveArbitraryNode(firstHeadCopy.get());
+    Expr* secondArbitraryNode = retrieveArbitraryNode(secondHeadCopy.get());
+    std::unique_ptr<Expr> firstChild = firstArbitraryNode->ownRandomChild();
+    std::unique_ptr<Expr> secondChild = secondArbitraryNode->ownRandomChild();
+    firstArbitraryNode->returnChildOwnership(std::move(secondChild));
+    secondArbitraryNode->returnChildOwnership(std::move(firstChild));
+    return std::make_tuple(std::move(firstHeadCopy), std::move(secondHeadCopy));
+}
 
 Not::Not(const std::vector<const std::string>& terminalOptions, int depth) {
     expr = randomNode(terminalOptions, depth - 1);

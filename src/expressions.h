@@ -31,8 +31,7 @@ std::unique_ptr<Expr> randomNode(const std::vector<const std::string>& terminalO
 
 /* Performs a recombination on copies of both trees passed in. */
 std::tuple<std::unique_ptr<Expr>, std::unique_ptr<Expr>>
-performRecombination(const std::unique_ptr<Expr>& firstHead,
-                     const std::unique_ptr<Expr>& secondHead);
+performRecombination(Expr* firstHead, Expr* secondHead);
 
 class Not final : public Expr
 {

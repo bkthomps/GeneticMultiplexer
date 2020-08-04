@@ -14,29 +14,13 @@ int main() {
             {"d3", false},
     };
     std::vector<const std::string> optionsMux6 = {"a0", "a1", "d0", "d1", "d2", "d3"};
-    int headDepth = 5;
-    std::unique_ptr<Expr> firstTreeHead = randomNode(optionsMux6, headDepth);
-    std::unique_ptr<Expr> secondTreeHead = randomNode(optionsMux6, headDepth);
-    std::cout << "Depth: " << firstTreeHead->computeDepth()
-              << ", Logic Size: " << firstTreeHead->computeLogicSize()
-              << ", Truth: " << firstTreeHead->evaluate(mux6) << std::endl;
-    std::cout << firstTreeHead->prettyPrint() << std::endl;
-    std::cout << "Depth: " << secondTreeHead->computeDepth()
-              << ", Logic Size: " << secondTreeHead->computeLogicSize()
-              << ", Truth: " << secondTreeHead->evaluate(mux6) << std::endl;
-    std::cout << secondTreeHead->prettyPrint() << std::endl;
-    Expr* first = firstTreeHead->retrieveArbitraryNode(4.0 / firstTreeHead->computeLogicSize());
-    Expr* second = secondTreeHead->retrieveArbitraryNode(4.0 / secondTreeHead->computeLogicSize());
-    std::cout << first << std::endl;
-    std::cout << second << std::endl;
-    if (first != nullptr && second != nullptr) {
-        // This is recombination; TODO: make it it's own function
-        std::unique_ptr<Expr> firstChild = first->ownRandomChild();
-        std::unique_ptr<Expr> secondChild = second->ownRandomChild();
-        first->returnChildOwnership(std::move(secondChild));
-        second->returnChildOwnership(std::move(firstChild));
-        std::cout << firstTreeHead->prettyPrint() << std::endl;
-        std::cout << secondTreeHead->prettyPrint() << std::endl;
-    }
+    int headDepth = 3;
+    std::unique_ptr<Expr> first = randomNode(optionsMux6, headDepth);
+    std::unique_ptr<Expr> second = randomNode(optionsMux6, headDepth);
+    auto tuple = performRecombination(first.get(), second.get());
+    std::cout << first->prettyPrint() << std::endl;
+    std::cout << second->prettyPrint() << std::endl;
+    std::cout << std::get<0>(tuple)->prettyPrint() << std::endl;
+    std::cout << std::get<1>(tuple)->prettyPrint() << std::endl;
     return 0;
 }
