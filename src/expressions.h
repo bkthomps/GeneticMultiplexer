@@ -26,7 +26,7 @@ public:
 };
 
 /* Generates a random node with children based on specified depth. */
-std::unique_ptr<Expr> randomNode(const std::vector<std::string>& terminalOptions, int depth);
+std::unique_ptr<Expr> randomNode(const std::vector<const std::string>& terminalOptions, int depth);
 
 /* Performs a recombination on copies of both trees passed in. */
 std::tuple<std::unique_ptr<Expr>, std::unique_ptr<Expr>>
@@ -38,7 +38,7 @@ class Not final : public Expr
 private:
     std::unique_ptr<Expr> expr;
 public:
-    Not(const std::vector<std::string>& terminalOptions, int depth);
+    Not(const std::vector<const std::string>& terminalOptions, int depth);
     Not(const Not& old);
     std::unique_ptr<Expr> clone() override;
     int computeDepth() override;
@@ -56,7 +56,7 @@ private:
     std::unique_ptr<Expr> first;
     std::unique_ptr<Expr> second;
 public:
-    And(const std::vector<std::string>& terminalOptions, int depth);
+    And(const std::vector<const std::string>& terminalOptions, int depth);
     And(const And& old);
     std::unique_ptr<Expr> clone() override;
     int computeDepth() override;
@@ -74,7 +74,7 @@ private:
     std::unique_ptr<Expr> first;
     std::unique_ptr<Expr> second;
 public:
-    Or(const std::vector<std::string>& terminalOptions, int depth);
+    Or(const std::vector<const std::string>& terminalOptions, int depth);
     Or(const Or& old);
     std::unique_ptr<Expr> clone() override;
     int computeDepth() override;
@@ -93,7 +93,7 @@ private:
     std::unique_ptr<Expr> trueCase;
     std::unique_ptr<Expr> falseCase;
 public:
-    If(const std::vector<std::string>& terminalOptions, int depth);
+    If(const std::vector<const std::string>& terminalOptions, int depth);
     If(const If& old);
     std::unique_ptr<Expr> clone() override;
     int computeDepth() override;
@@ -110,7 +110,7 @@ class Terminal final : public Expr
 private:
     std::string terminal;
 public:
-    explicit Terminal(const std::vector<std::string>& terminalOptions);
+    explicit Terminal(const std::vector<const std::string>& terminalOptions);
     Terminal(const Terminal& old);
     std::unique_ptr<Expr> clone() override;
     int computeDepth() override;

@@ -13,7 +13,7 @@ int main() {
             {"d2", false},
             {"d3", false},
     };
-    std::vector<std::string> optionsMux6 = {"a0", "a1", "d0", "d1", "d2", "d3"};
+    std::vector<const std::string> optionsMux6 = {"a0", "a1", "d0", "d1", "d2", "d3"};
     int headDepth = 5;
     std::unique_ptr<Expr> firstTreeHead = randomNode(optionsMux6, headDepth);
     std::unique_ptr<Expr> secondTreeHead = randomNode(optionsMux6, headDepth);

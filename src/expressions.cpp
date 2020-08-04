@@ -16,7 +16,7 @@ double uniformReal() {
     return distribution(generator);
 }
 
-std::unique_ptr<Expr> randomNode(const std::vector<std::string>& terminalOptions, int depth) {
+std::unique_ptr<Expr> randomNode(const std::vector<const std::string>& terminalOptions, int depth) {
     if (depth == 0) {
         return std::make_unique<Terminal>(terminalOptions);
     }
@@ -42,7 +42,7 @@ performRecombination(const std::unique_ptr<Expr>& firstHead,
     return std::make_tuple(nullptr, nullptr);
 }*/
 
-Not::Not(const std::vector<std::string>& terminalOptions, int depth) {
+Not::Not(const std::vector<const std::string>& terminalOptions, int depth) {
     expr = randomNode(terminalOptions, depth - 1);
 }
 
@@ -86,7 +86,7 @@ void Not::returnChildOwnership(std::unique_ptr<Expr> child) {
     expr = std::move(child);
 }
 
-And::And(const std::vector<std::string>& terminalOptions, int depth) {
+And::And(const std::vector<const std::string>& terminalOptions, int depth) {
     first = randomNode(terminalOptions, depth - 1);
     second = randomNode(terminalOptions, depth - 1);
 }
@@ -153,7 +153,7 @@ void And::returnChildOwnership(std::unique_ptr<Expr> child) {
     }
 }
 
-Or::Or(const std::vector<std::string>& terminalOptions, int depth) {
+Or::Or(const std::vector<const std::string>& terminalOptions, int depth) {
     first = randomNode(terminalOptions, depth - 1);
     second = randomNode(terminalOptions, depth - 1);
 }
@@ -220,7 +220,7 @@ void Or::returnChildOwnership(std::unique_ptr<Expr> child) {
     }
 }
 
-If::If(const std::vector<std::string>& terminalOptions, int depth) {
+If::If(const std::vector<const std::string>& terminalOptions, int depth) {
     condition = randomNode(terminalOptions, depth - 1);
     trueCase = randomNode(terminalOptions, depth - 1);
     falseCase = randomNode(terminalOptions, depth - 1);
@@ -303,7 +303,7 @@ void If::returnChildOwnership(std::unique_ptr<Expr> child) {
     }
 }
 
-Terminal::Terminal(const std::vector<std::string>& terminalOptions) {
+Terminal::Terminal(const std::vector<const std::string>& terminalOptions) {
     unsigned long high = terminalOptions.size() - 1;
     int rand = uniformIntegerInclusiveBounds(0, static_cast<int>(high));
     terminal = terminalOptions[rand];
