@@ -42,6 +42,10 @@ int Not::computeSize() {
     return 1 + expr->computeSize();
 }
 
+bool Not::evaluate(const std::unordered_map<std::string, bool>& truthMap) {
+    return !expr->evaluate(truthMap);
+}
+
 And::And(const std::vector<std::string>& terminalOptions, int depth) {
     first = randomNode(terminalOptions, depth - 1);
     second = randomNode(terminalOptions, depth - 1);
@@ -55,6 +59,10 @@ int And::computeSize() {
     return 1 + first->computeSize() + second->computeSize();
 }
 
+bool And::evaluate(const std::unordered_map<std::string, bool>& truthMap) {
+    return first->evaluate(truthMap) && second->evaluate(truthMap);
+}
+
 Or::Or(const std::vector<std::string>& terminalOptions, int depth) {
     first = randomNode(terminalOptions, depth - 1);
     second = randomNode(terminalOptions, depth - 1);
@@ -66,6 +74,10 @@ int Or::computeDepth() {
 
 int Or::computeSize() {
     return 1 + first->computeSize() + second->computeSize();
+}
+
+bool Or::evaluate(const std::unordered_map<std::string, bool>& truthMap) {
+    return first->evaluate(truthMap) || second->evaluate(truthMap);
 }
 
 If::If(const std::vector<std::string>& terminalOptions, int depth) {
@@ -85,6 +97,11 @@ int If::computeSize() {
            + falseCase->computeSize();
 }
 
+bool If::evaluate(const std::unordered_map<std::string, bool>& truthMap) {
+    return condition->evaluate(truthMap) ? trueCase->evaluate(truthMap)
+                                         : falseCase->evaluate(truthMap);
+}
+
 Terminal::Terminal(const std::vector<std::string>& terminalOptions) {
     unsigned long high = terminalOptions.size() - 1;
     int rand = uniformRoundedInclusiveBounds(0, static_cast<int>(high));
@@ -97,4 +114,8 @@ int Terminal::computeDepth() {
 
 int Terminal::computeSize() {
     return 1;
+}
+
+bool Terminal::evaluate(const std::unordered_map<std::string, bool>& truthMap) {
+    return truthMap.at(terminal);
 }

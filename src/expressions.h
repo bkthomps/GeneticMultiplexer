@@ -3,6 +3,7 @@
 
 #include <memory>
 #include <vector>
+#include <unordered_map>
 #include <string>
 
 /*
@@ -15,6 +16,8 @@ protected:
 public:
     virtual int computeDepth() = 0;
     virtual int computeSize() = 0;
+    virtual bool
+    evaluate(const std::unordered_map<std::string, bool>& truthMap) = 0;
 };
 
 /*
@@ -31,6 +34,8 @@ public:
     Not(const std::vector<std::string>& terminalOptions, int depth);
     int computeDepth() override;
     int computeSize() override;
+    bool
+    evaluate(const std::unordered_map<std::string, bool>& truthMap) override;
 };
 
 class And final : public Expr
@@ -42,6 +47,8 @@ public:
     And(const std::vector<std::string>& terminalOptions, int depth);
     int computeDepth() override;
     int computeSize() override;
+    bool
+    evaluate(const std::unordered_map<std::string, bool>& truthMap) override;
 };
 
 class Or final : public Expr
@@ -53,6 +60,8 @@ public:
     Or(const std::vector<std::string>& terminalOptions, int depth);
     int computeDepth() override;
     int computeSize() override;
+    bool
+    evaluate(const std::unordered_map<std::string, bool>& truthMap) override;
 };
 
 class If final : public Expr
@@ -65,6 +74,8 @@ public:
     If(const std::vector<std::string>& terminalOptions, int depth);
     int computeDepth() override;
     int computeSize() override;
+    bool
+    evaluate(const std::unordered_map<std::string, bool>& truthMap) override;
 };
 
 class Terminal final : public Expr
@@ -75,6 +86,8 @@ public:
     explicit Terminal(const std::vector<std::string>& terminalOptions);
     int computeSize() override;
     int computeDepth() override;
+    bool
+    evaluate(const std::unordered_map<std::string, bool>& truthMap) override;
 };
 
 #endif
