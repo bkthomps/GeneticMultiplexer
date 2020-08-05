@@ -21,6 +21,7 @@ int calculateCombinations(int length) {
 double computeFitness(Expr* head, int addressCount, const std::vector<const std::string>& options) {
     assert(head != nullptr);
     assert(options.size() <= 16);
+    assert(calculateCombinations(addressCount) == static_cast<int>(options.size()) - addressCount);
     int depth = head->computeDepth();
     if (depth > maximumDepth) {
         return 0;
