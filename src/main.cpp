@@ -1,20 +1,13 @@
+#include <algorithm>
 #include <bitset>
 #include <iostream>
+#include <limits>
 #include <memory>
-#include <random>
 #include <tuple>
 #include <unordered_map>
 #include <vector>
 #include "constants.h"
 #include "expressions.h"
-
-std::random_device mainSeed;
-std::mt19937 mainGenerator(mainSeed());
-
-int mainUniformIntegerInclusiveBounds(int low, int high) {
-    std::uniform_int_distribution<int> distribution(low, high);
-    return distribution(mainGenerator);
-}
 
 int calculateCombinations(int length) {
     int ret = 1;
@@ -58,7 +51,7 @@ double computeFitness(Expr* head, int addressCount, const std::vector<const std:
     return baseFitness;
 }
 
-std::tuple<std::unique_ptr<Expr>, std::unique_ptr<Expr>>
+std::tuple<std::unique_ptr<Expr>, std::unique_ptr<Expr>, double>
 tournamentSelection(int addressCount, const std::vector<const std::string>& options,
                     std::vector<std::unique_ptr<Expr>>& samples) {
     std::unique_ptr<Expr> firstHead = nullptr;
@@ -67,7 +60,7 @@ tournamentSelection(int addressCount, const std::vector<const std::string>& opti
     double secondFitness = 0;
     for (int i = 0; i < selectionPerTournament; i++) {
         assert(!samples.empty());
-        int index = mainUniformIntegerInclusiveBounds(0, static_cast<int>(samples.size()) - 1);
+        int index = uniformIntegerInclusiveBounds(0, static_cast<int>(samples.size()) - 1);
         std::unique_ptr<Expr> head = std::move(samples[index]);
         samples.erase(samples.begin() + index);
         double fitness = computeFitness(head.get(), addressCount, options);
@@ -79,44 +72,54 @@ tournamentSelection(int addressCount, const std::vector<const std::string>& opti
             secondFitness = fitness;
         }
     }
-    return std::make_tuple(std::move(firstHead), std::move(secondHead));
+    if (secondFitness > firstFitness) {
+        std::swap(firstFitness, secondFitness);
+        std::swap(firstHead, secondHead);
+    }
+    assert(firstFitness >= secondFitness);
+    assert(firstHead.get() != secondHead.get());
+    return std::make_tuple(std::move(firstHead), std::move(secondHead), firstFitness);
 }
 
 int main() {
     std::vector<const std::string> optionsMux6 = {"a0", "a1", "d0", "d1", "d2", "d3"};
     int addressLinesMux6 = 2;
+    std::vector<double> bestFitness{};
+    std::string prettyTree{};
     std::vector<std::unique_ptr<Expr>> population{};
     population.reserve(populationSize);
     for (int i = 0; i < populationSize; i++) {
         population.emplace_back(randomNode(optionsMux6, initialDepth));
     }
     int tournaments = populationSize / selectionPerTournament;
-    for (int i = 0; i < iterations; i++) {
+    do {
         std::vector<std::unique_ptr<Expr>> updatedPopulation{};
         updatedPopulation.reserve(populationSize);
+        double bestFitnessIteration = 0;
         for (int j = 0; j < tournaments; j++) {
-            auto parents = tournamentSelection(addressLinesMux6, optionsMux6, population);
-            std::unique_ptr<Expr> father = std::move(std::get<0>(parents));
-            std::unique_ptr<Expr> mother = std::move(std::get<1>(parents));
+            auto tuple = tournamentSelection(addressLinesMux6, optionsMux6, population);
+            std::unique_ptr<Expr> parentOne = std::move(std::get<0>(tuple));
+            std::unique_ptr<Expr> parentTwo = std::move(std::get<1>(tuple));
+            if (std::get<2>(tuple) > bestFitnessIteration) {
+                bestFitnessIteration = std::get<2>(tuple);
+                prettyTree = parentOne->prettyPrint();
+            }
             for (int k = 0; k < selectionPerTournament / 2; k++) {
-                auto children = performRecombination(father.get(), mother.get());
-                std::unique_ptr<Expr> son = std::move(std::get<0>(children));
-                std::unique_ptr<Expr> daughter = std::move(std::get<1>(children));
-                updatedPopulation.emplace_back(std::move(son));
-                updatedPopulation.emplace_back(std::move(daughter));
+                auto children = performRecombination(parentOne.get(), parentTwo.get());
+                std::unique_ptr<Expr> childOne = std::move(std::get<0>(children));
+                std::unique_ptr<Expr> childTwo = std::move(std::get<1>(children));
+                updatedPopulation.emplace_back(std::move(childOne));
+                updatedPopulation.emplace_back(std::move(childTwo));
             }
         }
         assert(population.empty());
         assert(updatedPopulation.size() == populationSize);
+        bestFitness.emplace_back(bestFitnessIteration);
         population = std::move(updatedPopulation);
+    } while (bestFitness.back() < 1.0 - std::numeric_limits<double>::epsilon());
+    for (auto n : bestFitness) {
+        std::cout << n << std::endl;
     }
-    double bestFitness = 0;
-    for (int i = 0; i < populationSize; i++) {
-        double fitness = computeFitness(population[i].get(), addressLinesMux6, optionsMux6);
-        if (fitness > bestFitness) {
-            bestFitness = fitness;
-        }
-    }
-    std::cout << bestFitness << std::endl;
+    std::cout << prettyTree << std::endl;
     return 0;
 }

@@ -7,6 +7,8 @@
 #include <unordered_map>
 #include <vector>
 
+int uniformIntegerInclusiveBounds(int low, int high);
+
 /*
  * The depth and size specifies the depth and size
  * of the entire tree below the respective node.
