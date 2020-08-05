@@ -80,15 +80,14 @@ tournamentSelection(int addressCount, const std::vector<const std::string>& opti
     return std::make_tuple(std::move(firstHead), std::move(secondHead), firstFitness);
 }
 
-int main() {
-    std::vector<const std::string> optionsMux6 = {"a0", "a1", "d0", "d1", "d2", "d3"};
-    int addressLinesMux6 = 2;
+std::tuple<std::vector<double>, std::string>
+computeMultiplexer(int addressCount, const std::vector<const std::string>& options) {
     std::vector<double> bestFitness{};
     std::string prettyTree{};
     std::vector<std::unique_ptr<Expr>> population{};
     population.reserve(populationSize);
     for (int i = 0; i < populationSize; i++) {
-        population.emplace_back(randomNode(optionsMux6, initialDepth));
+        population.emplace_back(randomNode(options, initialDepth));
     }
     int tournaments = populationSize / selectionPerTournament;
     do {
@@ -96,7 +95,7 @@ int main() {
         updatedPopulation.reserve(populationSize);
         double bestFitnessIteration = 0;
         for (int j = 0; j < tournaments; j++) {
-            auto tuple = tournamentSelection(addressLinesMux6, optionsMux6, population);
+            auto tuple = tournamentSelection(addressCount, options, population);
             auto[parentOne, parentTwo, bestParentFitness] = std::move(tuple);
             if (bestParentFitness > bestFitnessIteration) {
                 bestFitnessIteration = bestParentFitness;
@@ -113,6 +112,13 @@ int main() {
         bestFitness.emplace_back(bestFitnessIteration);
         population = std::move(updatedPopulation);
     } while (bestFitness.back() < 1.0 - std::numeric_limits<double>::epsilon());
+    return std::make_tuple(std::move(bestFitness), prettyTree);
+}
+
+int main() {
+    std::vector<const std::string> optionsMux6 = {"a0", "a1", "d0", "d1", "d2", "d3"};
+    int addressLinesMux6 = 2;
+    auto[bestFitness, prettyTree] = computeMultiplexer(addressLinesMux6, optionsMux6);
     for (auto n : bestFitness) {
         std::cout << n << std::endl;
     }
