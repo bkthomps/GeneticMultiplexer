@@ -44,7 +44,7 @@ double computeFitness(Expr* head, int addressCount, const std::vector<const std:
     }
     double baseFitness = correct / combinations;
     if (depth > disfavorDepth) {
-        double factor = 1 / (depth - disfavorDepth + 0.5);
+        double factor = static_cast<double>(maximumDepth - depth) / (maximumDepth - disfavorDepth);
         assert(0.0 <= factor && factor <= 1.0);
         baseFitness *= factor;
     }

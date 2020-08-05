@@ -11,11 +11,17 @@ const double crossoverProbability = 0.9;
 
 const int initialDepth = 3;
 
-/* After this depth, the tree fitness will linearly scale until the maximum depth. */
+/*
+ * From this depth onwards, the tree fitness will linearly scale until the maximum depth. Meaning,
+ * at this point, the fitness remains as the full unscaled factor, but afterwards, it is scaled.
+ */
 const int disfavorDepth = 6;
 
-/* After this depth, the tree will have a fitness of exactly zero. */
-const int maximumDepth = 9;
+/*
+ * At this depth and beyond, the tree will have a fitness of exactly zero. Meaning, at this point,
+ * the fitness will be zero regardless of any other factors.
+ */
+const int maximumDepth = 12;
 
 const int populationSize = 1000;
 
