@@ -79,8 +79,8 @@ int Not::computeLogicSize() const {
     return 1 + expr->computeLogicSize();
 }
 
-bool Not::evaluate(const std::unordered_map<std::string, bool>& truthMap) const {
-    return !expr->evaluate(truthMap);
+bool Not::evaluate(const std::vector<bool>& truthTable) const {
+    return !expr->evaluate(truthTable);
 }
 
 std::string Not::prettyPrint() const {
@@ -125,8 +125,8 @@ int And::computeLogicSize() const {
     return 1 + first->computeLogicSize() + second->computeLogicSize();
 }
 
-bool And::evaluate(const std::unordered_map<std::string, bool>& truthMap) const {
-    return first->evaluate(truthMap) && second->evaluate(truthMap);
+bool And::evaluate(const std::vector<bool>& truthTable) const {
+    return first->evaluate(truthTable) && second->evaluate(truthTable);
 }
 
 std::string And::prettyPrint() const {
@@ -192,8 +192,8 @@ int Or::computeLogicSize() const {
     return 1 + first->computeLogicSize() + second->computeLogicSize();
 }
 
-bool Or::evaluate(const std::unordered_map<std::string, bool>& truthMap) const {
-    return first->evaluate(truthMap) || second->evaluate(truthMap);
+bool Or::evaluate(const std::vector<bool>& truthTable) const {
+    return first->evaluate(truthTable) || second->evaluate(truthTable);
 }
 
 std::string Or::prettyPrint() const {
@@ -263,9 +263,9 @@ int If::computeLogicSize() const {
            + falseCase->computeLogicSize();
 }
 
-bool If::evaluate(const std::unordered_map<std::string, bool>& truthMap) const {
-    return condition->evaluate(truthMap) ? trueCase->evaluate(truthMap)
-                                         : falseCase->evaluate(truthMap);
+bool If::evaluate(const std::vector<bool>& truthTable) const {
+    return condition->evaluate(truthTable) ? trueCase->evaluate(truthTable)
+                                           : falseCase->evaluate(truthTable);
 }
 
 std::string If::prettyPrint() const {
@@ -324,10 +324,12 @@ Terminal::Terminal(const std::vector<const std::string>& terminalOptions) {
     unsigned long high = terminalOptions.size() - 1;
     int rand = uniformIntegerInclusiveBounds(0, static_cast<int>(high));
     terminal = terminalOptions[rand];
+    truthTableIndex = rand;
 }
 
 Terminal::Terminal(const Terminal& old) {
     terminal = old.terminal;
+    truthTableIndex = old.truthTableIndex;
 }
 
 std::unique_ptr<Expr> Terminal::clone() const {
@@ -342,8 +344,8 @@ int Terminal::computeLogicSize() const {
     return 0;
 }
 
-bool Terminal::evaluate(const std::unordered_map<std::string, bool>& truthMap) const {
-    return truthMap.at(terminal);
+bool Terminal::evaluate(const std::vector<bool>& truthTable) const {
+    return truthTable[truthTableIndex];
 }
 
 std::string Terminal::prettyPrint() const {

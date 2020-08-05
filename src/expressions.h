@@ -4,7 +4,6 @@
 #include <memory>
 #include <string>
 #include <tuple>
-#include <unordered_map>
 #include <vector>
 
 int uniformIntegerInclusiveBounds(int low, int high);
@@ -20,8 +19,7 @@ public:
     [[nodiscard]] virtual std::unique_ptr<Expr> clone() const = 0;
     [[nodiscard]] virtual int computeDepth() const = 0;
     [[nodiscard]] virtual int computeLogicSize() const = 0;
-    [[nodiscard]] virtual bool
-    evaluate(const std::unordered_map<std::string, bool>& truthMap) const = 0;
+    [[nodiscard]] virtual bool evaluate(const std::vector<bool>& truthTable) const = 0;
     [[nodiscard]] virtual std::string prettyPrint() const = 0;
     [[nodiscard]] virtual Expr* retrieveArbitraryNode(double probability) = 0;
     [[nodiscard]] virtual std::unique_ptr<Expr> ownRandomChild() = 0;
@@ -45,8 +43,7 @@ public:
     [[nodiscard]] std::unique_ptr<Expr> clone() const override;
     [[nodiscard]] int computeDepth() const override;
     [[nodiscard]] int computeLogicSize() const override;
-    [[nodiscard]] bool
-    evaluate(const std::unordered_map<std::string, bool>& truthMap) const override;
+    [[nodiscard]] bool evaluate(const std::vector<bool>& truthTable) const override;
     [[nodiscard]] std::string prettyPrint() const override;
     [[nodiscard]] Expr* retrieveArbitraryNode(double probability) override;
     [[nodiscard]] std::unique_ptr<Expr> ownRandomChild() override;
@@ -64,8 +61,7 @@ public:
     [[nodiscard]] std::unique_ptr<Expr> clone() const override;
     [[nodiscard]] int computeDepth() const override;
     [[nodiscard]] int computeLogicSize() const override;
-    [[nodiscard]] bool
-    evaluate(const std::unordered_map<std::string, bool>& truthMap) const override;
+    [[nodiscard]] bool evaluate(const std::vector<bool>& truthTable) const override;
     [[nodiscard]] std::string prettyPrint() const override;
     [[nodiscard]] Expr* retrieveArbitraryNode(double probability) override;
     [[nodiscard]] std::unique_ptr<Expr> ownRandomChild() override;
@@ -83,8 +79,7 @@ public:
     [[nodiscard]] std::unique_ptr<Expr> clone() const override;
     [[nodiscard]] int computeDepth() const override;
     [[nodiscard]] int computeLogicSize() const override;
-    [[nodiscard]] bool
-    evaluate(const std::unordered_map<std::string, bool>& truthMap) const override;
+    [[nodiscard]] bool evaluate(const std::vector<bool>& truthTable) const override;
     [[nodiscard]] std::string prettyPrint() const override;
     [[nodiscard]] Expr* retrieveArbitraryNode(double probability) override;
     [[nodiscard]] std::unique_ptr<Expr> ownRandomChild() override;
@@ -103,8 +98,7 @@ public:
     [[nodiscard]] std::unique_ptr<Expr> clone() const override;
     [[nodiscard]] int computeDepth() const override;
     [[nodiscard]] int computeLogicSize() const override;
-    [[nodiscard]] bool
-    evaluate(const std::unordered_map<std::string, bool>& truthMap) const override;
+    [[nodiscard]] bool evaluate(const std::vector<bool>& truthTable) const override;
     [[nodiscard]] std::string prettyPrint() const override;
     [[nodiscard]] Expr* retrieveArbitraryNode(double probability) override;
     [[nodiscard]] std::unique_ptr<Expr> ownRandomChild() override;
@@ -115,14 +109,14 @@ class Terminal final : public Expr
 {
 private:
     std::string terminal;
+    int truthTableIndex;
 public:
     explicit Terminal(const std::vector<const std::string>& terminalOptions);
     Terminal(const Terminal& old);
     [[nodiscard]] std::unique_ptr<Expr> clone() const override;
     [[nodiscard]] int computeDepth() const override;
     [[nodiscard]] int computeLogicSize() const override;
-    [[nodiscard]] bool
-    evaluate(const std::unordered_map<std::string, bool>& truthMap) const override;
+    [[nodiscard]] bool evaluate(const std::vector<bool>& truthTable) const override;
     [[nodiscard]] std::string prettyPrint() const override;
     [[nodiscard]] Expr* retrieveArbitraryNode(double probability) override;
     [[nodiscard]] std::unique_ptr<Expr> ownRandomChild() override;
