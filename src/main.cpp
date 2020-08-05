@@ -180,7 +180,7 @@ int main(int argc, char* argv[]) {
     }
     if (run11mux) {
         std::vector<const std::string> mux11 =
-                {"a0", "a1", "a2", "d0", "d1", "d2", "d3", "d7", "d8", "d9", "d10"};
+                {"a0", "a1", "a2", "d0", "d1", "d2", "d3", "d4", "d5", "d6", "d7"};
         logComputedMultiplexer("11mux", 3, mux11);
     }
     if (run16middle3) {
