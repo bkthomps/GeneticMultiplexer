@@ -64,7 +64,8 @@ std::unique_ptr<Expr> performMutation(Expr* head, const std::vector<const std::s
     std::unique_ptr<Expr> headCopy = head->clone();
     Expr* arbitraryNode = retrieveArbitraryNode(headCopy.get());
     static_cast<void>(arbitraryNode->ownRandomChild());
-    int depth = uniformIntegerInclusiveBounds(1, 3);
+    std::discrete_distribution<int> distribution{0, 1, 1, 2, 2, 3};
+    int depth = distribution(generator);
     std::unique_ptr<Expr> mutation = randomNode(options, depth);
     arbitraryNode->returnChildOwnership(std::move(mutation));
     return headCopy;

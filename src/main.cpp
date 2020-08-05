@@ -129,7 +129,9 @@ computeMultiplexer(int addressCount, const std::vector<const std::string>& optio
         assert(updatedPopulation.size() == populationSize);
         bestFitness.emplace_back(bestFitnessIteration);
         population = std::move(updatedPopulation);
-        std::cout << bestFitnessIteration << std::endl;
+        if (bestFitness.size() % 10 == 0) {
+            std::cout << bestFitnessIteration << std::endl;
+        }
     } while (bestFitness.back() < 1.0 - std::numeric_limits<double>::epsilon());
     return std::make_tuple(std::move(bestFitness), prettyTree);
 }
