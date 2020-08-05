@@ -16,16 +16,11 @@ size_t calculateCombinations(int length) {
     return ret;
 }
 
-double computeFitness(Expr* head, size_t addressCount, size_t optionsCount) {
-    assert(head != nullptr);
+size_t correctMultiplexerLogicCount(Expr* head, size_t addressCount, size_t optionsCount,
+                                    size_t combinations) {
     assert(calculateCombinations(addressCount) == optionsCount - addressCount);
-    int depth = head->computeDepth();
-    if (depth > maximumDepth) {
-        return 0;
-    }
-    size_t combinations = calculateCombinations(optionsCount);
     std::vector<bool> truthTable(optionsCount, false);
-    double correct = 0;
+    size_t correct = 0;
     for (size_t i = 0; i < combinations; i++) {
         for (size_t j = 0; j < optionsCount; j++) {
             size_t offset = (optionsCount - 1) - j % optionsCount;
@@ -42,10 +37,45 @@ double computeFitness(Expr* head, size_t addressCount, size_t optionsCount) {
             correct++;
         }
     }
+    return correct;
+}
+
+size_t correctMiddleLogicCount(Expr* head, size_t optionsCount, size_t combinations) {
+    std::vector<bool> truthTable(optionsCount, false);
+    size_t correct = 0;
+    for (size_t i = 0; i < combinations; i++) {
+        int zerosCount = 0;
+        for (size_t j = 0; j < optionsCount; j++) {
+            size_t offset = (optionsCount - 1) - j % optionsCount;
+            truthTable[j] = (i & (1U << offset)) >> offset;
+            zerosCount += truthTable[j];
+        }
+        bool actualTruth = 7 <= zerosCount && zerosCount <= 9;
+        bool predictedTruth = head->evaluate(truthTable);
+        if (actualTruth == predictedTruth) {
+            correct++;
+        }
+    }
+    return correct;
+}
+
+double computeFitness(Expr* head, size_t addressCount, size_t optionsCount) {
+    assert(head != nullptr);
+    int depth = head->computeDepth();
+    if (depth > maximumDepth) {
+        return 0;
+    }
+    size_t combinations = calculateCombinations(optionsCount);
+    size_t correct;
+    if (addressCount == 0) {
+        correct = correctMiddleLogicCount(head, optionsCount, combinations);
+    } else {
+        correct = correctMultiplexerLogicCount(head, addressCount, optionsCount, combinations);
+    }
     if (correct == combinations) {
         return 1;
     }
-    double baseFitness = correct / combinations;
+    double baseFitness = static_cast<double>(correct) / combinations;
     if (depth > disfavorDepth) {
         double factor = static_cast<double>(maximumDepth - depth) / (maximumDepth - disfavorDepth);
         assert(0.0 <= factor && factor <= 1.0);
@@ -127,9 +157,7 @@ computeMultiplexer(int addressCount, const std::vector<const std::string>& optio
         assert(updatedPopulation.size() == populationSize);
         bestFitness.emplace_back(bestFitnessIteration);
         population = std::move(updatedPopulation);
-        if (bestFitness.size() % 10 == 0) {
-            std::cout << bestFitnessIteration << std::endl;
-        }
+        std::cout << bestFitnessIteration << std::endl;
     } while (bestFitness.back() < 1.0 - std::numeric_limits<double>::epsilon());
     return std::make_tuple(std::move(bestFitness), prettyTree);
 }
@@ -184,7 +212,12 @@ int main(int argc, char* argv[]) {
         logComputedMultiplexer("11mux", 3, mux11);
     }
     if (run16middle3) {
-        // TODO: add
+        std::vector<const std::string> pins{};
+        pins.reserve(16);
+        for (int i = 0; i < 16; i++) {
+            pins.emplace_back("e" + std::to_string(i));
+        }
+        logComputedMultiplexer("16middle3", 0, pins);
     }
     return 0;
 }
