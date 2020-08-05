@@ -1,7 +1,9 @@
 #include <bitset>
+#include <fstream>
 #include <iostream>
 #include <limits>
 #include <memory>
+#include <stdexcept>
 #include <tuple>
 #include <unordered_map>
 #include <vector>
@@ -115,13 +117,30 @@ computeMultiplexer(int addressCount, const std::vector<const std::string>& optio
     return std::make_tuple(std::move(bestFitness), prettyTree);
 }
 
-int main() {
-    std::vector<const std::string> optionsMux6 = {"a0", "a1", "d0", "d1", "d2", "d3"};
-    int addressLinesMux6 = 2;
-    auto[bestFitness, prettyTree] = computeMultiplexer(addressLinesMux6, optionsMux6);
-    for (auto n : bestFitness) {
-        std::cout << n << std::endl;
+void logComputedMultiplexer(const std::string& name, int addressCount,
+                            const std::vector<const std::string>& options) {
+    auto[bestFitness, prettyTree] = computeMultiplexer(addressCount, options);
+    std::ofstream fitnessFile;
+    fitnessFile.open(name + "_fitness.csv", std::ios::out);
+    if (fitnessFile.fail()) {
+        throw std::runtime_error{"Could not open file: " + name};
     }
-    std::cout << prettyTree << std::endl;
+    fitnessFile << "sep=," << std::endl;
+    for (unsigned int i = 0; i < bestFitness.size(); i++) {
+        fitnessFile << i << ',' << bestFitness[i] << std::endl;
+    }
+    fitnessFile.close();
+    std::ofstream treeFile;
+    treeFile.open(name + "_tree.csv", std::ios::out);
+    if (treeFile.fail()) {
+        throw std::runtime_error{"Could not open file: " + name};
+    }
+    treeFile << prettyTree << std::endl;
+    treeFile.close();
+    std::cout << "Done with " << name << std::endl;
+}
+
+int main() {
+    logComputedMultiplexer("6mux", 2, {"a0", "a1", "d0", "d1", "d2", "d3"});
     return 0;
 }
