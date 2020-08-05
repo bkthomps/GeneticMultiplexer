@@ -187,29 +187,29 @@ void logComputedMultiplexer(const std::string& name, int addressCount,
 }
 
 int main(int argc, char* argv[]) {
+    std::string name6mux = std::string{"6mux"};
+    std::string name11mux = std::string{"11mux"};
+    std::string name16middle3 = std::string{"16middle3"};
     bool run6mux = false;
     bool run11mux = false;
     bool run16middle3 = false;
     for (int i = 1; i < argc; i++) {
-        if (std::string{"6mux"} == argv[i]) {
-            run6mux = true;
-        } else if (std::string{"11mux"} == argv[i]) {
-            run11mux = true;
-        } else if (std::string{"16middle3"} == argv[i]) {
-            run16middle3 = true;
-        }
+        run6mux = run6mux || argv[i] == name6mux;
+        run11mux = run11mux || argv[i] == name11mux;
+        run16middle3 = run16middle3 || argv[i] == name16middle3;
     }
     if (!run6mux && !run11mux && !run16middle3) {
-        std::cout << "Run with arguments 6mux or 11mux or 16middle3" << std::endl;
+        std::cout << "Run with arguments " << name6mux << " or " << name11mux << " or "
+                  << name16middle3 << std::endl;
     }
     if (run6mux) {
         std::vector<const std::string> mux6 = {"a0", "a1", "d0", "d1", "d2", "d3"};
-        logComputedMultiplexer("6mux", 2, mux6);
+        logComputedMultiplexer(name6mux, 2, mux6);
     }
     if (run11mux) {
         std::vector<const std::string> mux11 =
                 {"a0", "a1", "a2", "d0", "d1", "d2", "d3", "d4", "d5", "d6", "d7"};
-        logComputedMultiplexer("11mux", 3, mux11);
+        logComputedMultiplexer(name11mux, 3, mux11);
     }
     if (run16middle3) {
         std::vector<const std::string> pins{};
@@ -217,7 +217,7 @@ int main(int argc, char* argv[]) {
         for (int i = 0; i < 16; i++) {
             pins.emplace_back("e" + std::to_string(i));
         }
-        logComputedMultiplexer("16middle3", 0, pins);
+        logComputedMultiplexer(name16middle3, 0, pins);
     }
     return 0;
 }
