@@ -1,4 +1,3 @@
-#include <algorithm>
 #include <bitset>
 #include <iostream>
 #include <limits>
@@ -98,16 +97,13 @@ int main() {
         double bestFitnessIteration = 0;
         for (int j = 0; j < tournaments; j++) {
             auto tuple = tournamentSelection(addressLinesMux6, optionsMux6, population);
-            std::unique_ptr<Expr> parentOne = std::move(std::get<0>(tuple));
-            std::unique_ptr<Expr> parentTwo = std::move(std::get<1>(tuple));
-            if (std::get<2>(tuple) > bestFitnessIteration) {
-                bestFitnessIteration = std::get<2>(tuple);
+            auto[parentOne, parentTwo, bestParentFitness] = std::move(tuple);
+            if (bestParentFitness > bestFitnessIteration) {
+                bestFitnessIteration = bestParentFitness;
                 prettyTree = parentOne->prettyPrint();
             }
             for (int k = 0; k < selectionPerTournament / 2; k++) {
-                auto children = performRecombination(parentOne.get(), parentTwo.get());
-                std::unique_ptr<Expr> childOne = std::move(std::get<0>(children));
-                std::unique_ptr<Expr> childTwo = std::move(std::get<1>(children));
+                auto[childOne, childTwo] = performRecombination(parentOne.get(), parentTwo.get());
                 updatedPopulation.emplace_back(std::move(childOne));
                 updatedPopulation.emplace_back(std::move(childTwo));
             }
