@@ -1,4 +1,3 @@
-#include <bitset>
 #include <fstream>
 #include <iostream>
 #include <limits>
@@ -9,7 +8,7 @@
 #include "constants.h"
 #include "expressions.h"
 
-int calculateCombinations(int length) {
+size_t calculateCombinations(int length) {
     int ret = 1;
     for (int i = 0; i < length; i++) {
         ret *= 2;
@@ -17,26 +16,27 @@ int calculateCombinations(int length) {
     return ret;
 }
 
-double computeFitness(Expr* head, int addressCount, int optionsCount) {
+double computeFitness(Expr* head, size_t addressCount, size_t optionsCount) {
     assert(head != nullptr);
-    assert(optionsCount <= 16);
     assert(calculateCombinations(addressCount) == optionsCount - addressCount);
     int depth = head->computeDepth();
     if (depth > maximumDepth) {
         return 0;
     }
-    size_t startIndex = 16 - optionsCount;
-    int combinations = calculateCombinations(optionsCount);
+    size_t combinations = calculateCombinations(optionsCount);
     std::vector<bool> truthTable(optionsCount, false);
     double correct = 0;
-    for (int i = 0; i < combinations; i++) {
-        std::string str = std::bitset<16>(i).to_string();
-        for (int j = 0; j < optionsCount; j++) {
-            truthTable[j] = str[startIndex + j] - '0';
+    for (size_t i = 0; i < combinations; i++) {
+        for (size_t j = 0; j < optionsCount; j++) {
+            size_t offset = (optionsCount - 1) - j % optionsCount;
+            truthTable[j] = (i & (1U << offset)) >> offset;
         }
-        auto currentAddress = str.substr(startIndex, addressCount);
-        size_t address = std::bitset<16>(currentAddress).to_ulong();
-        bool actualTruth = str[startIndex + addressCount + address] == '1';
+        size_t address = 0;
+        for (size_t j = 0; j < addressCount; j++) {
+            address *= 2;
+            address += truthTable[j];
+        }
+        bool actualTruth = truthTable[addressCount + address];
         bool predictedTruth = head->evaluate(truthTable);
         if (actualTruth == predictedTruth) {
             correct++;
@@ -55,7 +55,7 @@ double computeFitness(Expr* head, int addressCount, int optionsCount) {
 }
 
 std::tuple<std::unique_ptr<Expr>, std::unique_ptr<Expr>, double>
-tournamentSelection(int addressCount, int optionsCount,
+tournamentSelection(size_t addressCount, size_t optionsCount,
                     std::vector<std::unique_ptr<Expr>>& samples) {
     std::unique_ptr<Expr> firstHead = nullptr;
     std::unique_ptr<Expr> secondHead = nullptr;
@@ -100,8 +100,7 @@ computeMultiplexer(int addressCount, const std::vector<const std::string>& optio
         updatedPopulation.reserve(populationSize);
         double bestFitnessIteration = 0;
         for (int j = 0; j < tournaments; j++) {
-            int optionsCount = options.size();
-            auto tuple = tournamentSelection(addressCount, optionsCount, population);
+            auto tuple = tournamentSelection(addressCount, options.size(), population);
             auto[parentOne, parentTwo, bestParentFitness] = std::move(tuple);
             if (bestParentFitness > bestFitnessIteration) {
                 bestFitnessIteration = bestParentFitness;
