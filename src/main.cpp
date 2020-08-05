@@ -43,6 +43,9 @@ double computeFitness(Expr* head, int addressCount, int optionsCount) {
             correct++;
         }
     }
+    if (correct == combinations) {
+        return 1;
+    }
     double baseFitness = correct / combinations;
     if (depth > disfavorDepth) {
         double factor = static_cast<double>(maximumDepth - depth) / (maximumDepth - disfavorDepth);
