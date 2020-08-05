@@ -1,3 +1,4 @@
+#include <cassert>
 #include <fstream>
 #include <iostream>
 #include <limits>
@@ -115,7 +116,7 @@ tournamentSelection(size_t addressCount, size_t optionsCount,
 }
 
 std::tuple<std::vector<double>, std::string>
-computeMultiplexer(int addressCount, const std::vector<const std::string>& options) {
+computeMultiplexer(int addressCount, const std::vector<std::string>& options) {
     assert(crossoverProbability + mutationProbability <= 1.0);
     std::vector<double> bestFitness{};
     std::string prettyTree{};
@@ -163,7 +164,7 @@ computeMultiplexer(int addressCount, const std::vector<const std::string>& optio
 }
 
 void logComputedMultiplexer(const std::string& name, int addressCount,
-                            const std::vector<const std::string>& options) {
+                            const std::vector<std::string>& options) {
     std::cout << "* Starting " << name << std::endl;
     auto[bestFitness, prettyTree] = computeMultiplexer(addressCount, options);
     std::ofstream fitnessFile;
@@ -203,16 +204,16 @@ int main(int argc, char* argv[]) {
                   << name16middle3 << std::endl;
     }
     if (run6mux) {
-        std::vector<const std::string> mux6 = {"a0", "a1", "d0", "d1", "d2", "d3"};
+        const std::vector<std::string> mux6 = {"a0", "a1", "d0", "d1", "d2", "d3"};
         logComputedMultiplexer(name6mux, 2, mux6);
     }
     if (run11mux) {
-        std::vector<const std::string> mux11 =
+        const std::vector<std::string> mux11 =
                 {"a0", "a1", "a2", "d0", "d1", "d2", "d3", "d4", "d5", "d6", "d7"};
         logComputedMultiplexer(name11mux, 3, mux11);
     }
     if (run16middle3) {
-        std::vector<const std::string> pins{};
+        std::vector<std::string> pins{};
         pins.reserve(16);
         for (int i = 0; i < 16; i++) {
             pins.emplace_back("e" + std::to_string(i));

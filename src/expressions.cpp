@@ -1,4 +1,5 @@
 #include <algorithm>
+#include <cassert>
 #include <random>
 #include <stdexcept>
 #include "constants.h"
@@ -17,7 +18,7 @@ double uniformReal() {
     return distribution(generator);
 }
 
-std::unique_ptr<Expr> randomNode(const std::vector<const std::string>& terminalOptions, int depth) {
+std::unique_ptr<Expr> randomNode(const std::vector<std::string>& terminalOptions, int depth) {
     if (depth == 0) {
         return std::make_unique<Terminal>(terminalOptions);
     }
@@ -59,7 +60,7 @@ performRecombination(Expr* oldFirstHead, Expr* oldSecondHead) {
     return std::make_tuple(std::move(firstHeadCopy), std::move(secondHeadCopy));
 }
 
-std::unique_ptr<Expr> performMutation(Expr* head, const std::vector<const std::string>& options) {
+std::unique_ptr<Expr> performMutation(Expr* head, const std::vector<std::string>& options) {
     assert(head != nullptr);
     std::unique_ptr<Expr> headCopy = head->clone();
     Expr* arbitraryNode = retrieveArbitraryNode(headCopy.get());
@@ -71,7 +72,7 @@ std::unique_ptr<Expr> performMutation(Expr* head, const std::vector<const std::s
     return headCopy;
 }
 
-Not::Not(const std::vector<const std::string>& terminalOptions, int depth) {
+Not::Not(const std::vector<std::string>& terminalOptions, int depth) {
     expr = randomNode(terminalOptions, depth - 1);
 }
 
@@ -115,7 +116,7 @@ void Not::returnChildOwnership(std::unique_ptr<Expr> child) {
     expr = std::move(child);
 }
 
-And::And(const std::vector<const std::string>& terminalOptions, int depth) {
+And::And(const std::vector<std::string>& terminalOptions, int depth) {
     first = randomNode(terminalOptions, depth - 1);
     second = randomNode(terminalOptions, depth - 1);
 }
@@ -182,7 +183,7 @@ void And::returnChildOwnership(std::unique_ptr<Expr> child) {
     }
 }
 
-Or::Or(const std::vector<const std::string>& terminalOptions, int depth) {
+Or::Or(const std::vector<std::string>& terminalOptions, int depth) {
     first = randomNode(terminalOptions, depth - 1);
     second = randomNode(terminalOptions, depth - 1);
 }
@@ -249,7 +250,7 @@ void Or::returnChildOwnership(std::unique_ptr<Expr> child) {
     }
 }
 
-If::If(const std::vector<const std::string>& terminalOptions, int depth) {
+If::If(const std::vector<std::string>& terminalOptions, int depth) {
     condition = randomNode(terminalOptions, depth - 1);
     trueCase = randomNode(terminalOptions, depth - 1);
     falseCase = randomNode(terminalOptions, depth - 1);
@@ -332,7 +333,7 @@ void If::returnChildOwnership(std::unique_ptr<Expr> child) {
     }
 }
 
-Terminal::Terminal(const std::vector<const std::string>& terminalOptions) {
+Terminal::Terminal(const std::vector<std::string>& terminalOptions) {
     size_t high = terminalOptions.size() - 1;
     int rand = uniformIntegerInclusiveBounds(0, static_cast<int>(high));
     terminal = terminalOptions[rand];
