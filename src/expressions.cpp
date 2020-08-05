@@ -92,7 +92,7 @@ int Not::computeLogicSize() const {
     return 1 + expr->computeLogicSize();
 }
 
-bool Not::evaluate(const std::vector<bool>& truthTable) const {
+bool Not::evaluate(const std::vector<char>& truthTable) const {
     return !expr->evaluate(truthTable);
 }
 
@@ -138,7 +138,7 @@ int And::computeLogicSize() const {
     return 1 + first->computeLogicSize() + second->computeLogicSize();
 }
 
-bool And::evaluate(const std::vector<bool>& truthTable) const {
+bool And::evaluate(const std::vector<char>& truthTable) const {
     return first->evaluate(truthTable) && second->evaluate(truthTable);
 }
 
@@ -205,7 +205,7 @@ int Or::computeLogicSize() const {
     return 1 + first->computeLogicSize() + second->computeLogicSize();
 }
 
-bool Or::evaluate(const std::vector<bool>& truthTable) const {
+bool Or::evaluate(const std::vector<char>& truthTable) const {
     return first->evaluate(truthTable) || second->evaluate(truthTable);
 }
 
@@ -276,7 +276,7 @@ int If::computeLogicSize() const {
            + falseCase->computeLogicSize();
 }
 
-bool If::evaluate(const std::vector<bool>& truthTable) const {
+bool If::evaluate(const std::vector<char>& truthTable) const {
     return condition->evaluate(truthTable) ? trueCase->evaluate(truthTable)
                                            : falseCase->evaluate(truthTable);
 }
@@ -359,7 +359,7 @@ int Terminal::computeLogicSize() const {
     return 0;
 }
 
-bool Terminal::evaluate(const std::vector<bool>& truthTable) const {
+bool Terminal::evaluate(const std::vector<char>& truthTable) const {
     assert(truthTable.size() == truthTableSize);
     return truthTable[truthTableIndex];
 }

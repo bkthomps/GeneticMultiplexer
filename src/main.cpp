@@ -20,7 +20,7 @@ size_t calculateCombinations(int length) {
 size_t correctMultiplexerLogicCount(Expr* head, size_t addressCount, size_t optionsCount,
                                     size_t combinations) {
     assert(calculateCombinations(addressCount) == optionsCount - addressCount);
-    std::vector<bool> truthTable(optionsCount, false);
+    std::vector<char> truthTable(optionsCount, 0);
     size_t correct = 0;
     for (size_t i = 0; i < combinations; i++) {
         for (size_t j = 0; j < optionsCount; j++) {
@@ -42,7 +42,7 @@ size_t correctMultiplexerLogicCount(Expr* head, size_t addressCount, size_t opti
 }
 
 size_t correctMiddleLogicCount(Expr* head, size_t optionsCount, size_t combinations) {
-    std::vector<bool> truthTable(optionsCount, false);
+    std::vector<char> truthTable(optionsCount, 0);
     size_t correct = 0;
     for (size_t i = 0; i < combinations; i++) {
         int zerosCount = 0;
