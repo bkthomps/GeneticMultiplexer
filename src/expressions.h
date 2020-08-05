@@ -115,6 +115,7 @@ class Terminal final : public Expr
 private:
     std::string terminal;
     int truthTableIndex;
+    size_t truthTableSize;
 public:
     explicit Terminal(const std::vector<const std::string>& terminalOptions);
     Terminal(const Terminal& old);

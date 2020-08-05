@@ -25,10 +25,9 @@ double computeFitness(Expr* head, int addressCount, int optionsCount) {
     if (depth > maximumDepth) {
         return 0;
     }
-    unsigned long startIndex = 16 - optionsCount;
+    size_t startIndex = 16 - optionsCount;
     int combinations = calculateCombinations(optionsCount);
-    std::vector<bool> truthTable{};
-    truthTable.reserve(combinations);
+    std::vector<bool> truthTable(optionsCount, false);
     double correct = 0;
     for (int i = 0; i < combinations; i++) {
         std::string str = std::bitset<16>(i).to_string();
@@ -36,7 +35,7 @@ double computeFitness(Expr* head, int addressCount, int optionsCount) {
             truthTable[j] = str[startIndex + j] - '0';
         }
         auto currentAddress = str.substr(startIndex, addressCount);
-        unsigned long address = std::bitset<16>(currentAddress).to_ulong();
+        size_t address = std::bitset<16>(currentAddress).to_ulong();
         bool actualTruth = str[startIndex + addressCount + address] == '1';
         bool predictedTruth = head->evaluate(truthTable);
         if (actualTruth == predictedTruth) {
@@ -146,7 +145,7 @@ void logComputedMultiplexer(const std::string& name, int addressCount,
         throw std::runtime_error{"Could not open file: " + name};
     }
     fitnessFile << "sep=," << std::endl;
-    for (unsigned int i = 0; i < bestFitness.size(); i++) {
+    for (size_t i = 0; i < bestFitness.size(); i++) {
         fitnessFile << i << ',' << bestFitness[i] << std::endl;
     }
     fitnessFile.close();

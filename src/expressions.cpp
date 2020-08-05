@@ -333,15 +333,17 @@ void If::returnChildOwnership(std::unique_ptr<Expr> child) {
 }
 
 Terminal::Terminal(const std::vector<const std::string>& terminalOptions) {
-    unsigned long high = terminalOptions.size() - 1;
+    size_t high = terminalOptions.size() - 1;
     int rand = uniformIntegerInclusiveBounds(0, static_cast<int>(high));
     terminal = terminalOptions[rand];
     truthTableIndex = rand;
+    truthTableSize = terminalOptions.size();
 }
 
 Terminal::Terminal(const Terminal& old) {
     terminal = old.terminal;
     truthTableIndex = old.truthTableIndex;
+    truthTableSize = old.truthTableSize;
 }
 
 std::unique_ptr<Expr> Terminal::clone() const {
@@ -357,6 +359,7 @@ int Terminal::computeLogicSize() const {
 }
 
 bool Terminal::evaluate(const std::vector<bool>& truthTable) const {
+    assert(truthTable.size() == truthTableSize);
     return truthTable[truthTableIndex];
 }
 
