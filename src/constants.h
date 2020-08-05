@@ -17,4 +17,10 @@ const int disfavorDepth = 6;
 /* After this depth, the tree will have a fitness of exactly zero. */
 const int maximumDepth = 9;
 
+const int iterations = 50;
+
+const int populationSize = 1000;
+
+const int selectionPerTournament = 100;
+
 #endif
