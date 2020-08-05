@@ -114,12 +114,14 @@ computeMultiplexer(int addressCount, const std::vector<const std::string>& optio
         assert(updatedPopulation.size() == populationSize);
         bestFitness.emplace_back(bestFitnessIteration);
         population = std::move(updatedPopulation);
+        std::cout << bestFitnessIteration << std::endl;
     } while (bestFitness.back() < 1.0 - std::numeric_limits<double>::epsilon());
     return std::make_tuple(std::move(bestFitness), prettyTree);
 }
 
 void logComputedMultiplexer(const std::string& name, int addressCount,
                             const std::vector<const std::string>& options) {
+    std::cout << "* Starting " << name << std::endl;
     auto[bestFitness, prettyTree] = computeMultiplexer(addressCount, options);
     std::ofstream fitnessFile;
     fitnessFile.open(name + "_fitness.csv", std::ios::out);
@@ -138,10 +140,14 @@ void logComputedMultiplexer(const std::string& name, int addressCount,
     }
     treeFile << prettyTree << std::endl;
     treeFile.close();
-    std::cout << "Done with " << name << std::endl;
+    std::cout << "* Done with " << name << std::endl;
 }
 
 int main() {
-    logComputedMultiplexer("6mux", 2, {"a0", "a1", "d0", "d1", "d2", "d3"});
+    std::vector<const std::string> mux6 = {"a0", "a1", "d0", "d1", "d2", "d3"};
+    logComputedMultiplexer("6mux", 2, mux6);
+    std::vector<const std::string> mux11 =
+            {"a0", "a1", "a2", "d0", "d1", "d2", "d3", "d7", "d8", "d9", "d10"};
+    logComputedMultiplexer("11mux", 3, mux11);
     return 0;
 }
