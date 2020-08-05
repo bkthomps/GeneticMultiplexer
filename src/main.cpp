@@ -87,6 +87,7 @@ tournamentSelection(int addressCount, int optionsCount,
 
 std::tuple<std::vector<double>, std::string>
 computeMultiplexer(int addressCount, const std::vector<const std::string>& options) {
+    assert(crossoverProbability + mutationProbability <= 1.0);
     std::vector<double> bestFitness{};
     std::string prettyTree{};
     std::vector<std::unique_ptr<Expr>> population{};
@@ -108,9 +109,20 @@ computeMultiplexer(int addressCount, const std::vector<const std::string>& optio
                 prettyTree = parentOne->prettyPrint();
             }
             for (int k = 0; k < selectionPerTournament / 2; k++) {
-                auto[childOne, childTwo] = performRecombination(parentOne.get(), parentTwo.get());
-                updatedPopulation.emplace_back(std::move(childOne));
-                updatedPopulation.emplace_back(std::move(childTwo));
+                if (uniformReal() < crossoverProbability) {
+                    auto[childOne, childTwo] = performRecombination(parentOne.get(),
+                                                                    parentTwo.get());
+                    updatedPopulation.emplace_back(std::move(childOne));
+                    updatedPopulation.emplace_back(std::move(childTwo));
+                } else if (uniformReal() < mutationProbability / (1 - crossoverProbability)) {
+                    auto childOne = performMutation(parentOne.get(), options);
+                    auto childTwo = performMutation(parentTwo.get(), options);
+                    updatedPopulation.emplace_back(std::move(childOne));
+                    updatedPopulation.emplace_back(std::move(childTwo));
+                } else {
+                    updatedPopulation.emplace_back(parentOne->clone());
+                    updatedPopulation.emplace_back(parentTwo->clone());
+                }
             }
         }
         assert(population.empty());

@@ -8,6 +8,8 @@
 
 int uniformIntegerInclusiveBounds(int low, int high);
 
+double uniformReal();
+
 /*
  * The depth and size specifies the depth and size
  * of the entire tree below the respective node.
@@ -32,6 +34,9 @@ std::unique_ptr<Expr> randomNode(const std::vector<const std::string>& terminalO
 /* Performs a recombination on copies of both trees passed in. */
 std::tuple<std::unique_ptr<Expr>, std::unique_ptr<Expr>>
 performRecombination(Expr* firstHead, Expr* secondHead);
+
+/* Performs a mutation on a copy of the tree passed in. */
+std::unique_ptr<Expr> performMutation(Expr* head, const std::vector<const std::string>& options);
 
 class Not final : public Expr
 {

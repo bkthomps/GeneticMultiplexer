@@ -59,6 +59,17 @@ performRecombination(Expr* oldFirstHead, Expr* oldSecondHead) {
     return std::make_tuple(std::move(firstHeadCopy), std::move(secondHeadCopy));
 }
 
+std::unique_ptr<Expr> performMutation(Expr* head, const std::vector<const std::string>& options) {
+    assert(head != nullptr);
+    std::unique_ptr<Expr> headCopy = head->clone();
+    Expr* arbitraryNode = retrieveArbitraryNode(headCopy.get());
+    static_cast<void>(arbitraryNode->ownRandomChild());
+    int depth = uniformIntegerInclusiveBounds(1, 3);
+    std::unique_ptr<Expr> mutation = randomNode(options, depth);
+    arbitraryNode->returnChildOwnership(std::move(mutation));
+    return headCopy;
+}
+
 Not::Not(const std::vector<const std::string>& terminalOptions, int depth) {
     expr = randomNode(terminalOptions, depth - 1);
 }

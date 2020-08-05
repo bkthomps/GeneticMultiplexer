@@ -9,6 +9,8 @@ const double arbitraryNodeSelectionAggressiveness = 4;
 
 const double crossoverProbability = 0.9;
 
+const double mutationProbability = 0.05;
+
 const int initialDepth = 3;
 
 /*
