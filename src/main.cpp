@@ -62,6 +62,7 @@ size_t correctMiddleLogicCount(Expr* head, size_t optionsCount, size_t combinati
 
 double computeFitness(Expr* head, size_t addressCount, size_t optionsCount) {
     assert(head != nullptr);
+    assert(disfavorDepth < maximumDepth);
     int depth = head->computeDepth();
     if (depth > maximumDepth) {
         return 0;
@@ -118,6 +119,7 @@ tournamentSelection(size_t addressCount, size_t optionsCount,
 std::tuple<std::vector<double>, std::string>
 computeMultiplexer(int addressCount, const std::vector<std::string>& options) {
     assert(crossoverProbability + mutationProbability <= 1.0);
+    assert(populationSize % selectionPerTournament == 0);
     std::vector<double> bestFitness{};
     std::string prettyTree{};
     std::vector<std::unique_ptr<Expr>> population{};

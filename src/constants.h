@@ -23,10 +23,10 @@ const int disfavorDepth = 5;
  * At this depth and beyond, the tree will have a fitness of exactly zero. Meaning, at this point,
  * the fitness will be zero regardless of any other factors.
  */
-const int maximumDepth = 9;
+const int maximumDepth = 6;
 
-const int populationSize = 2000;
+const int populationSize = 10'000;
 
-const int selectionPerTournament = 200;
+const int selectionPerTournament = 100;
 
 #endif
