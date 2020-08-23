@@ -9,12 +9,8 @@
 #include "constants.h"
 #include "expressions.h"
 
-std::size_t calculateCombinations(int length) {
-    int ret = 1;
-    for (int i = 0; i < length; i++) {
-        ret *= 2;
-    }
-    return ret;
+constexpr std::size_t calculateCombinations(std::size_t length) {
+    return 1u << length;
 }
 
 std::size_t correctMultiplexerLogicCount(Expr* head, std::size_t addressCount,
