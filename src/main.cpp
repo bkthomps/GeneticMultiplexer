@@ -42,13 +42,13 @@ std::size_t correctMiddleLogicCount(Expr* head, std::size_t optionsCount,
     std::vector<char> truthTable(optionsCount, 0);
     std::size_t correct = 0;
     for (std::size_t i = 0; i < combinations; i++) {
-        int zerosCount = 0;
+        int onesCount = 0;
         for (std::size_t j = 0; j < optionsCount; j++) {
             std::size_t offset = (optionsCount - 1) - j % optionsCount;
             truthTable[j] = (i & (1U << offset)) >> offset;
-            zerosCount += truthTable[j];
+            onesCount += truthTable[j];
         }
-        bool actualTruth = 7 <= zerosCount && zerosCount <= 9;
+        bool actualTruth = 7 <= onesCount && onesCount <= 9;
         bool predictedTruth = head->evaluate(truthTable);
         if (actualTruth == predictedTruth) {
             correct++;
