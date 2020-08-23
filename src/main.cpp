@@ -9,7 +9,7 @@
 #include "constants.h"
 #include "expressions.h"
 
-size_t calculateCombinations(int length) {
+std::size_t calculateCombinations(int length) {
     int ret = 1;
     for (int i = 0; i < length; i++) {
         ret *= 2;
@@ -17,18 +17,18 @@ size_t calculateCombinations(int length) {
     return ret;
 }
 
-size_t correctMultiplexerLogicCount(Expr* head, size_t addressCount, size_t optionsCount,
-                                    size_t combinations) {
+std::size_t correctMultiplexerLogicCount(Expr* head, std::size_t addressCount,
+                                         std::size_t optionsCount, std::size_t combinations) {
     assert(calculateCombinations(addressCount) == optionsCount - addressCount);
     std::vector<char> truthTable(optionsCount, 0);
-    size_t correct = 0;
-    for (size_t i = 0; i < combinations; i++) {
-        for (size_t j = 0; j < optionsCount; j++) {
-            size_t offset = (optionsCount - 1) - j % optionsCount;
+    std::size_t correct = 0;
+    for (std::size_t i = 0; i < combinations; i++) {
+        for (std::size_t j = 0; j < optionsCount; j++) {
+            std::size_t offset = (optionsCount - 1) - j % optionsCount;
             truthTable[j] = (i & (1U << offset)) >> offset;
         }
-        size_t address = 0;
-        for (size_t j = 0; j < addressCount; j++) {
+        std::size_t address = 0;
+        for (std::size_t j = 0; j < addressCount; j++) {
             address *= 2;
             address += truthTable[j];
         }
@@ -41,13 +41,14 @@ size_t correctMultiplexerLogicCount(Expr* head, size_t addressCount, size_t opti
     return correct;
 }
 
-size_t correctMiddleLogicCount(Expr* head, size_t optionsCount, size_t combinations) {
+std::size_t correctMiddleLogicCount(Expr* head, std::size_t optionsCount,
+                                    std::size_t combinations) {
     std::vector<char> truthTable(optionsCount, 0);
-    size_t correct = 0;
-    for (size_t i = 0; i < combinations; i++) {
+    std::size_t correct = 0;
+    for (std::size_t i = 0; i < combinations; i++) {
         int zerosCount = 0;
-        for (size_t j = 0; j < optionsCount; j++) {
-            size_t offset = (optionsCount - 1) - j % optionsCount;
+        for (std::size_t j = 0; j < optionsCount; j++) {
+            std::size_t offset = (optionsCount - 1) - j % optionsCount;
             truthTable[j] = (i & (1U << offset)) >> offset;
             zerosCount += truthTable[j];
         }
@@ -60,15 +61,15 @@ size_t correctMiddleLogicCount(Expr* head, size_t optionsCount, size_t combinati
     return correct;
 }
 
-double computeFitness(Expr* head, size_t addressCount, size_t optionsCount) {
+double computeFitness(Expr* head, std::size_t addressCount, std::size_t optionsCount) {
     assert(head != nullptr);
     assert(disfavorDepth < maximumDepth);
     int depth = head->computeDepth();
     if (depth > maximumDepth) {
         return 0;
     }
-    size_t combinations = calculateCombinations(optionsCount);
-    size_t correct;
+    std::size_t combinations = calculateCombinations(optionsCount);
+    std::size_t correct;
     if (addressCount == 0) {
         correct = correctMiddleLogicCount(head, optionsCount, combinations);
     } else {
@@ -87,7 +88,7 @@ double computeFitness(Expr* head, size_t addressCount, size_t optionsCount) {
 }
 
 std::tuple<std::unique_ptr<Expr>, std::unique_ptr<Expr>, double>
-tournamentSelection(size_t addressCount, size_t optionsCount,
+tournamentSelection(std::size_t addressCount, std::size_t optionsCount,
                     std::vector<std::unique_ptr<Expr>>& samples) {
     std::unique_ptr<Expr> firstHead = nullptr;
     std::unique_ptr<Expr> secondHead = nullptr;
@@ -175,7 +176,7 @@ void logComputedMultiplexer(const std::string& name, int addressCount,
         throw std::runtime_error{"Could not open file: " + name};
     }
     fitnessFile << "sep=," << std::endl;
-    for (size_t i = 0; i < bestFitness.size(); i++) {
+    for (std::size_t i = 0; i < bestFitness.size(); i++) {
         fitnessFile << i << ',' << bestFitness[i] << std::endl;
     }
     fitnessFile.close();

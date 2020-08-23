@@ -334,7 +334,7 @@ void If::returnChildOwnership(std::unique_ptr<Expr> child) {
 }
 
 Terminal::Terminal(const std::vector<std::string>& terminalOptions) {
-    size_t high = terminalOptions.size() - 1;
+    std::size_t high = terminalOptions.size() - 1;
     int rand = uniformIntegerInclusiveBounds(0, static_cast<int>(high));
     terminal = terminalOptions[rand];
     truthTableIndex = rand;
