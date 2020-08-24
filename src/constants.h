@@ -5,28 +5,28 @@
  * Setting this too high will result in higher nodes being selection more
  * frequently than deeper nodes. However, setting it too low impacts efficiency.
  */
-const double arbitraryNodeSelectionAggressiveness = 4;
+constexpr double arbitraryNodeSelectionAggressiveness{4.0};
 
-const double crossoverProbability = 0.94;
+constexpr double crossoverProbability{0.94};
 
-const double mutationProbability = 0.04;
+constexpr double mutationProbability{0.04};
 
-const int initialDepth = 3;
+constexpr int initialDepth{3};
 
 /*
  * From this depth onwards, the tree fitness will linearly scale until the maximum depth. Meaning,
  * at this point, the fitness remains as the full unscaled factor, but afterwards, it is scaled.
  */
-const int disfavorDepth = 5;
+constexpr int disfavorDepth{5};
 
 /*
  * At this depth and beyond, the tree will have a fitness of exactly zero. Meaning, at this point,
  * the fitness will be zero regardless of any other factors.
  */
-const int maximumDepth = 6;
+constexpr int maximumDepth{6};
 
-const int populationSize = 10'000;
+constexpr int populationSize{10'000};
 
-const int selectionPerTournament = 100;
+constexpr int selectionPerTournament{100};
 
 #endif

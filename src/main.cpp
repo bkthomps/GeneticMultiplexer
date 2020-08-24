@@ -115,8 +115,8 @@ tournamentSelection(std::size_t addressCount, std::size_t optionsCount,
 
 std::tuple<std::vector<double>, std::string>
 computeMultiplexer(int addressCount, const std::vector<std::string>& options) {
-    assert(crossoverProbability + mutationProbability <= 1.0);
-    assert(populationSize % selectionPerTournament == 0);
+    static_assert(crossoverProbability + mutationProbability <= 1.0);
+    static_assert(populationSize % selectionPerTournament == 0);
     std::vector<double> bestFitness{};
     std::string prettyTree{};
     std::vector<std::unique_ptr<Expr>> population{};
