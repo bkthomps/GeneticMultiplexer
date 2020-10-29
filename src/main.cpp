@@ -5,6 +5,7 @@
 #include <memory>
 #include <stdexcept>
 #include <tuple>
+#include <unordered_set>
 #include <vector>
 #include "constants.h"
 #include "expressions.h"
@@ -13,9 +14,9 @@ constexpr std::size_t calculateCombinations(std::size_t length) {
     return 1u << length;
 }
 
-std::size_t correctMultiplexerLogicCount(Expr* head, std::size_t addressCount,
-                                         std::size_t optionsCount, std::size_t combinations) {
-    assert(calculateCombinations(addressCount) == optionsCount - addressCount);
+std::size_t correctLogicCount(Expr* head, std::size_t addressPins, std::size_t optionsCount,
+                              std::size_t combinations) {
+    assert(calculateCombinations(addressPins) == optionsCount - addressPins);
     std::vector<char> truthTable(optionsCount, 0);
     std::size_t correct = 0;
     for (std::size_t i = 0; i < combinations; i++) {
@@ -24,11 +25,11 @@ std::size_t correctMultiplexerLogicCount(Expr* head, std::size_t addressCount,
             truthTable[j] = (i & (1U << offset)) >> offset;
         }
         std::size_t address = 0;
-        for (std::size_t j = 0; j < addressCount; j++) {
+        for (std::size_t j = 0; j < addressPins; j++) {
             address *= 2;
             address += truthTable[j];
         }
-        bool actualTruth = truthTable[addressCount + address];
+        bool actualTruth = truthTable[addressPins + address];
         bool predictedTruth = head->evaluate(truthTable);
         if (actualTruth == predictedTruth) {
             correct++;
@@ -37,7 +38,7 @@ std::size_t correctMultiplexerLogicCount(Expr* head, std::size_t addressCount,
     return correct;
 }
 
-double computeFitness(Expr* head, std::size_t addressCount, std::size_t optionsCount) {
+double computeFitness(Expr* head, std::size_t addressPins, std::size_t optionsCount) {
     assert(head != nullptr);
     assert(disfavorDepth < maximumDepth);
     int depth = head->computeDepth();
@@ -45,8 +46,7 @@ double computeFitness(Expr* head, std::size_t addressCount, std::size_t optionsC
         return 0;
     }
     std::size_t combinations = calculateCombinations(optionsCount);
-    std::size_t correct
-            = correctMultiplexerLogicCount(head, addressCount, optionsCount, combinations);
+    std::size_t correct = correctLogicCount(head, addressPins, optionsCount, combinations);
     if (correct == combinations) {
         return 1;
     }
@@ -60,7 +60,7 @@ double computeFitness(Expr* head, std::size_t addressCount, std::size_t optionsC
 }
 
 std::tuple<std::unique_ptr<Expr>, std::unique_ptr<Expr>, double>
-tournamentSelection(std::size_t addressCount, std::size_t optionsCount,
+tournamentSelection(std::size_t addressPins, std::size_t optionsCount,
                     std::vector<std::unique_ptr<Expr>>& samples) {
     std::unique_ptr<Expr> firstHead = nullptr;
     std::unique_ptr<Expr> secondHead = nullptr;
@@ -71,7 +71,7 @@ tournamentSelection(std::size_t addressCount, std::size_t optionsCount,
         int index = uniformIntegerInclusiveBounds(0, static_cast<int>(samples.size()) - 1);
         std::unique_ptr<Expr> head = std::move(samples[index]);
         samples.erase(samples.begin() + index);
-        double fitness = computeFitness(head.get(), addressCount, optionsCount);
+        double fitness = computeFitness(head.get(), addressPins, optionsCount);
         if (fitness > firstFitness) {
             firstHead = std::move(head);
             firstFitness = fitness;
@@ -90,7 +90,7 @@ tournamentSelection(std::size_t addressCount, std::size_t optionsCount,
 }
 
 std::tuple<std::vector<double>, std::string>
-computeMultiplexer(int addressCount, const std::vector<std::string>& options) {
+computeMultiplexer(int addressPins, const std::vector<std::string>& options) {
     static_assert(crossoverProbability + mutationProbability <= 1.0);
     static_assert(populationSize % selectionPerTournament == 0);
     std::vector<double> bestFitness{};
@@ -106,7 +106,7 @@ computeMultiplexer(int addressCount, const std::vector<std::string>& options) {
         updatedPopulation.reserve(populationSize);
         double bestFitnessIteration = 0;
         for (int j = 0; j < tournaments; j++) {
-            auto tuple = tournamentSelection(addressCount, options.size(), population);
+            auto tuple = tournamentSelection(addressPins, options.size(), population);
             auto[parentOne, parentTwo, bestParentFitness] = std::move(tuple);
             if (bestParentFitness > bestFitnessIteration) {
                 bestFitnessIteration = bestParentFitness;
@@ -138,10 +138,10 @@ computeMultiplexer(int addressCount, const std::vector<std::string>& options) {
     return std::make_tuple(std::move(bestFitness), prettyTree);
 }
 
-void logComputedMultiplexer(const std::string& name, int addressCount,
+void logComputedMultiplexer(const std::string& name, const int addressPins,
                             const std::vector<std::string>& options) {
     std::cout << "* Starting " << name << std::endl;
-    auto[bestFitness, prettyTree] = computeMultiplexer(addressCount, options);
+    auto[bestFitness, prettyTree] = computeMultiplexer(addressPins, options);
     std::ofstream fitnessFile;
     fitnessFile.open(name + "_fitness.csv", std::ios::out);
     if (fitnessFile.fail()) {
@@ -162,26 +162,64 @@ void logComputedMultiplexer(const std::string& name, int addressCount,
     std::cout << "* Done with " << name << std::endl;
 }
 
-int main(int argc, char* argv[]) {
-    std::string name6mux = std::string{"6mux"};
-    std::string name11mux = std::string{"11mux"};
-    bool run6mux = false;
-    bool run11mux = false;
+constexpr int getAddressPins(int dataPins) {
+    dataPins--;
+    int powers = 0;
+    while (dataPins != 0) {
+        powers++;
+        dataPins /= 2;
+    }
+    return powers;
+}
+
+std::vector<int> dataPinsToCompute(int argc, char* argv[]) {
+    std::vector<int> compute{};
+    std::unordered_set<int> alreadyComputed{};
     for (int i = 1; i < argc; i++) {
-        run6mux = run6mux || argv[i] == name6mux;
-        run11mux = run11mux || argv[i] == name11mux;
+        int dataPins;
+        try {
+            dataPins = std::stoi(argv[i]);
+        } catch (const std::logic_error& e) {
+            std::cout << "Error: not representable (" << argv[i] << ")" << std::endl;
+            return compute;
+        }
+        if (dataPins < 1) {
+            std::cout << "Error: data pin count must be positive (" << dataPins << ")" << std::endl;
+            return compute;
+        }
+        if (alreadyComputed.count(dataPins)) {
+            std::cout << "Warn: ignoring duplicate (" << dataPins << ")" << std::endl;
+            continue;
+        }
+        // TODO: implement capability
+        if (calculateCombinations(getAddressPins(dataPins)) != (std::size_t) dataPins) {
+            std::cout << "Warn: non-power of 2 data pins not yet implemented, skipping ("
+                      << dataPins << ")" << std::endl;
+            continue;
+        }
+        alreadyComputed.insert(dataPins);
+        compute.emplace_back(dataPins);
     }
-    if (!run6mux && !run11mux) {
-        std::cout << "Run with arguments " << name6mux << " or " << name11mux << std::endl;
+    return compute;
+}
+
+int main(int argc, char* argv[]) {
+    if (argc < 2) {
+        std::cout << "Add data pin count as input argument" << std::endl;
+        return -1;
     }
-    if (run6mux) {
-        const std::vector<std::string> mux6 = {"a0", "a1", "d0", "d1", "d2", "d3"};
-        logComputedMultiplexer(name6mux, 2, mux6);
-    }
-    if (run11mux) {
-        const std::vector<std::string> mux11 =
-                {"a0", "a1", "a2", "d0", "d1", "d2", "d3", "d4", "d5", "d6", "d7"};
-        logComputedMultiplexer(name11mux, 3, mux11);
+    for (int dataPins : dataPinsToCompute(argc, argv)) {
+        std::string name{std::to_string(dataPins) + std::string{"_data_pins"}};
+        int addressPins = getAddressPins(dataPins);
+        std::vector<std::string> options{};
+        options.reserve(addressPins + dataPins);
+        for (int i = 0; i < addressPins; i++) {
+            options.emplace_back(std::string{"a"} + std::to_string(i));
+        }
+        for (int i = 0; i < dataPins; i++) {
+            options.emplace_back(std::string{"d"} + std::to_string(i));
+        }
+        logComputedMultiplexer(name, addressPins, options);
     }
     return 0;
 }
