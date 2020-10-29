@@ -1,1 +1,0 @@
-( IF ( IF a1 THEN a2 ELSE ( IF a1 THEN a2 ELSE a0 ) ) THEN ( IF ( a1 OR a2 ) THEN ( IF ( a0 AND a0 ) THEN ( IF a1 THEN d7 ELSE d5 ) ELSE ( d3 OR a0 ) ) ELSE ( IF ( a0 AND d4 ) THEN ( ( IF a0 THEN a0 ELSE d3 ) AND ( a2 OR d4 ) ) ELSE ( d1 AND a2 ) ) ) ELSE ( IF ( a1 OR a0 ) THEN ( IF a0 THEN d6 ELSE d2 ) ELSE ( IF a2 THEN d1 ELSE ( IF a2 THEN d1 ELSE d0 ) ) ) )
