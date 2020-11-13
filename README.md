@@ -8,7 +8,7 @@ Uses genetic programming to compute the decision tree of a multiplexer.
 
 ## Setup
 
-To compile, run `make` and then you can run `.genetic_multiplexer <data_pins>` where `data_pins` is
+To compile, run `make` and then you can run `./genetic_multiplexer <data_pins>` where `data_pins` is
 the number of data pins you would like the multiplexer to contain.
 
 ## What is a multiplexer?
