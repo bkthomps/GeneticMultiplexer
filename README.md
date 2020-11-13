@@ -21,4 +21,4 @@ the address pins. The address pins map to the data pins, meaning that a multiple
 address pins may contain at most four data pins, and a multiplexer with three address pins may
 contain at most eight address pins.
 
-![Eight Multiplexer](/images/8_mux.png?raw=true "Eight Multiplexer")
+![Eight Multiplexer](images/8_mux.png "Eight Multiplexer")
