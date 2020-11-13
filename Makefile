@@ -1,25 +1,25 @@
 .DEFAULT_GOAL := clang
 
 clang:
-	clang++ src/expressions.cpp src/main.cpp --std=c++17 -O3 -o genetic_multiplexer
+	clang++ src/expressions.cpp src/main.cpp --std=c++17 -O3 -o gen_mux
 
 gcc:
-	g++ src/expressions.cpp src/main.cpp --std=c++17 -O3 -o genetic_multiplexer
+	g++ src/expressions.cpp src/main.cpp --std=c++17 -O3 -o gen_mux
 
 test:
 	make clang
 	clang++ tst/integration.cpp --std=c++17 -o test_gen_mux
-	./genetic_multiplexer 4
-	./test_gen_mux 4_data_pins_tree.csv
+	./gen_mux 2
+	./test_gen_mux 2_address_pins_tree.txt
 
 long_test:
 	make clang
 	clang++ tst/integration.cpp --std=c++17 -o test_gen_mux
-	./genetic_multiplexer 8
-	./test_gen_mux 8_data_pins_tree.csv
+	./gen_mux 3
+	./test_gen_mux 3_address_pins_tree.txt
 
 clean:
 	rm -f *.csv
 	find *.txt -type f ! -name 'CMakeLists.txt' -delete
-	rm -f genetic_multiplexer
+	rm -f gen_mux
 	rm -f test_gen_mux

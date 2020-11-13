@@ -138,7 +138,7 @@ computeMultiplexer(int addressPins, const std::vector<std::string>& options) {
     return std::make_tuple(std::move(bestFitness), prettyTree);
 }
 
-void logComputedMultiplexer(const std::string& name, const int addressPins,
+void writeMultiplexerToFile(const std::string& name, const int addressPins,
                             const std::vector<std::string>& options) {
     std::cout << "* Starting " << name << std::endl;
     auto[bestFitness, prettyTree] = computeMultiplexer(addressPins, options);
@@ -153,7 +153,7 @@ void logComputedMultiplexer(const std::string& name, const int addressPins,
     }
     fitnessFile.close();
     std::ofstream treeFile;
-    treeFile.open(name + "_tree.csv", std::ios::out);
+    treeFile.open(name + "_tree.txt", std::ios::out);
     if (treeFile.fail()) {
         throw std::runtime_error{"Could not open file: " + name};
     }
@@ -162,55 +162,39 @@ void logComputedMultiplexer(const std::string& name, const int addressPins,
     std::cout << "* Done with " << name << std::endl;
 }
 
-constexpr int getAddressPins(int dataPins) {
-    dataPins--;
-    int powers = 0;
-    while (dataPins != 0) {
-        powers++;
-        dataPins /= 2;
-    }
-    return powers;
-}
-
-std::vector<int> dataPinsToCompute(int argc, char* argv[]) {
+std::vector<int> addressPinsToCompute(int argc, char* argv[]) {
     std::vector<int> compute{};
     std::unordered_set<int> alreadyComputed{};
     for (int i = 1; i < argc; i++) {
-        int dataPins;
+        int pins;
         try {
-            dataPins = std::stoi(argv[i]);
+            pins = std::stoi(argv[i]);
         } catch (const std::logic_error& e) {
             std::cout << "Error: not representable (" << argv[i] << ")" << std::endl;
             return compute;
         }
-        if (dataPins < 1) {
-            std::cout << "Error: data pin count must be positive (" << dataPins << ")" << std::endl;
+        if (pins < 1) {
+            std::cout << "Error: address pin count must be positive (" << pins << ")" << std::endl;
             return compute;
         }
-        if (alreadyComputed.count(dataPins)) {
-            std::cout << "Warn: ignoring duplicate (" << dataPins << ")" << std::endl;
+        if (alreadyComputed.count(pins)) {
+            std::cout << "Warn: ignoring duplicate (" << pins << ")" << std::endl;
             continue;
         }
-        // TODO: implement capability
-        if (calculateCombinations(getAddressPins(dataPins)) != (std::size_t) dataPins) {
-            std::cout << "Warn: non-power of 2 data pins not yet implemented, skipping ("
-                      << dataPins << ")" << std::endl;
-            continue;
-        }
-        alreadyComputed.insert(dataPins);
-        compute.emplace_back(dataPins);
+        alreadyComputed.insert(pins);
+        compute.emplace_back(pins);
     }
     return compute;
 }
 
 int main(int argc, char* argv[]) {
     if (argc < 2) {
-        std::cout << "Add data pin count as input argument" << std::endl;
+        std::cout << "Add address pin count as input argument" << std::endl;
         return -1;
     }
-    for (int dataPins : dataPinsToCompute(argc, argv)) {
-        std::string name{std::to_string(dataPins) + std::string{"_data_pins"}};
-        int addressPins = getAddressPins(dataPins);
+    for (int addressPins : addressPinsToCompute(argc, argv)) {
+        int dataPins = calculateCombinations(addressPins);
+        std::string name{std::to_string(addressPins) + std::string{"_address_pins"}};
         std::vector<std::string> options{};
         options.reserve(addressPins + dataPins);
         for (int i = 0; i < addressPins; i++) {
@@ -219,7 +203,7 @@ int main(int argc, char* argv[]) {
         for (int i = 0; i < dataPins; i++) {
             options.emplace_back(std::string{"d"} + std::to_string(i));
         }
-        logComputedMultiplexer(name, addressPins, options);
+        writeMultiplexerToFile(name, addressPins, options);
     }
     return 0;
 }
