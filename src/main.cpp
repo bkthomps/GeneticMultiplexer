@@ -171,11 +171,11 @@ std::vector<int> addressPinsToCompute(int argc, char* argv[]) {
             pins = std::stoi(argv[i]);
         } catch (const std::logic_error& e) {
             std::cout << "Error: not representable (" << argv[i] << ")" << std::endl;
-            return compute;
+            return {};
         }
         if (pins < 1) {
             std::cout << "Error: address pin count must be positive (" << pins << ")" << std::endl;
-            return compute;
+            return {};
         }
         if (alreadyComputed.count(pins)) {
             std::cout << "Warn: ignoring duplicate (" << pins << ")" << std::endl;
