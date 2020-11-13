@@ -19,5 +19,7 @@ long_test:
 	./test_gen_mux 8_data_pins_tree.csv
 
 clean:
-	rm *.csv
-	rm genetic_multiplexer
+	rm -f *.csv
+	find *.txt -type f ! -name 'CMakeLists.txt' -delete
+	rm -f genetic_multiplexer
+	rm -f test_gen_mux
