@@ -214,7 +214,7 @@ int main(int argc, char* argv[]) {
         std::vector<std::string> options{};
         options.reserve(addressPins + dataPins);
         for (int i = 0; i < addressPins; i++) {
-            options.emplace_back(std::string{"a"} + "0");
+            options.emplace_back(std::string{"a"} + std::to_string(i));
         }
         for (int i = 0; i < dataPins; i++) {
             options.emplace_back(std::string{"d"} + std::to_string(i));
