@@ -3,3 +3,4 @@ cmake-build-debug/*
 genetic_multiplexer
 test_gen_mux
 *.csv
+*.txt
