@@ -1,4 +1,5 @@
 cmake-build-debug/*
 .idea/*
 genetic_multiplexer
+test_gen_mux
 *.csv
