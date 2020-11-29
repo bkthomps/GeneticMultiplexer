@@ -1,4 +1,5 @@
 #include <cassert>
+#include <climits>
 #include <fstream>
 #include <iostream>
 #include <limits>
@@ -11,7 +12,7 @@
 #include "expressions.h"
 
 constexpr std::size_t calculateCombinations(std::size_t length) {
-    return 1u << length;
+    return static_cast<std::size_t>(1) << length;
 }
 
 std::size_t correctLogicCount(Expr* head, std::size_t addressPins, std::size_t optionsCount,
@@ -170,15 +171,15 @@ std::vector<int> addressPinsToCompute(int argc, char* argv[]) {
         try {
             pins = std::stoi(argv[i]);
         } catch (const std::logic_error& e) {
-            std::cout << "Error: not representable (" << argv[i] << ")" << std::endl;
+            std::cerr << "Error: not representable (" << argv[i] << ")" << std::endl;
             return {};
         }
         if (pins < 1) {
-            std::cout << "Error: address pin count must be positive (" << pins << ")" << std::endl;
+            std::cerr << "Error: address pin count must be positive (" << pins << ")" << std::endl;
             return {};
         }
         if (alreadyComputed.count(pins)) {
-            std::cout << "Warn: ignoring duplicate (" << pins << ")" << std::endl;
+            std::cerr << "Warn: ignoring duplicate (" << pins << ")" << std::endl;
             continue;
         }
         alreadyComputed.insert(pins);
@@ -189,11 +190,17 @@ std::vector<int> addressPinsToCompute(int argc, char* argv[]) {
 
 int main(int argc, char* argv[]) {
     if (argc < 2) {
-        std::cout << "Add address pin count as input argument" << std::endl;
+        std::cerr << "Add address pin count as input argument" << std::endl;
         return -1;
     }
     for (int addressPins : addressPinsToCompute(argc, argv)) {
         int dataPins = calculateCombinations(addressPins);
+        if (CHAR_BIT * sizeof(std::size_t) < addressPins + dataPins) {
+            std::cerr << "Warn: skipping " << addressPins << " address pins since not representable; "
+                      << "address + data pin count: " << addressPins + dataPins
+                      << ", std::size_t bit count: " << CHAR_BIT * sizeof(std::size_t) << std::endl;
+            continue;
+        }
         std::string name{std::to_string(addressPins) + std::string{"_address_pins"}};
         std::vector<std::string> options{};
         options.reserve(addressPins + dataPins);
