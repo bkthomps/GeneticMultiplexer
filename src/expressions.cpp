@@ -1,7 +1,6 @@
 #include <algorithm>
 #include <cassert>
 #include <random>
-#include <stdexcept>
 #include "constants.h"
 #include "expressions.h"
 
