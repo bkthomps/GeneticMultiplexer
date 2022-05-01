@@ -19,8 +19,5 @@ with two address pins has four data pins, and a multiplexer with three address p
 data pins.
 
 <p align="center">
-  <img src="https://raw.githubusercontent.com/bkthomps/GeneticMultiplexer/main/mux_example.gif" height="400" title="Multiplexer" alt="A multiplexer with three address pins">
+  <img src="https://raw.githubusercontent.com/bkthomps/GeneticMultiplexer/main/mux_example.png" height="400" title="Multiplexer" alt="A multiplexer with three address pins">
 </p>
-
-## Implementation
-
