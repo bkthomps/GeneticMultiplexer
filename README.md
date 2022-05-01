@@ -3,16 +3,13 @@
 [![License](https://img.shields.io/badge/license-MIT-blue.svg)](https://github.com/bkthomps/GeneticMultiplexer/blob/master/LICENSE)
 
 # GeneticMultiplexer
-
 Uses genetic programming to compute the decision tree of a multiplexer.
 
 ## Setup
-
 To compile, run `make` and then you can run `./gen_mux <address_pins>` where `address_pins` is the
 number of address pins you would like the multiplexer to contain.
 
 ## What is a multiplexer?
-
 A multiplexer is a circuit component that contains data pins, address pins, and an output pin. All
 of these pins are binary values.
 
@@ -21,4 +18,9 @@ the values of the address pins. The address pins map to the data pins, meaning t
 with two address pins has four data pins, and a multiplexer with three address pins has eight
 data pins.
 
-![Three Address Multiplexer](images/3_address_mux.png "Three Address Multiplexer")
+<p align="center">
+  <img src="https://raw.githubusercontent.com/bkthomps/GeneticMultiplexer/main/mux_example.gif" height="400" title="Multiplexer" alt="A multiplexer with three address pins">
+</p>
+
+## Implementation
+

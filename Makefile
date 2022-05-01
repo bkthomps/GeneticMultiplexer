@@ -6,14 +6,12 @@ clang:
 gcc:
 	g++ src/expressions.cpp src/main.cpp --std=c++17 -O3 -o gen_mux
 
-test:
-	make clang
+test: clang
 	clang++ tst/integration.cpp --std=c++17 -o test_gen_mux
 	./gen_mux 2
 	./test_gen_mux 2_address_pins_tree.txt
 
-long_test:
-	make clang
+long_test: clang
 	clang++ tst/integration.cpp --std=c++17 -o test_gen_mux
 	./gen_mux 3
 	./test_gen_mux 3_address_pins_tree.txt
